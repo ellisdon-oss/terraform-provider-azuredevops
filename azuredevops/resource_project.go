@@ -4,7 +4,7 @@ import (
 	//	"log"
 	"time"
 
-	"github.com/ellisdon/azuredevops-go/azuredevops"
+	"github.com/ellisdon/azuredevops-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
 )

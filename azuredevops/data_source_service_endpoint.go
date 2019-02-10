@@ -2,7 +2,7 @@ package azuredevops
 
 import (
 	"github.com/antihax/optional"
-	"github.com/ellisdon/azuredevops-go/azuredevops"
+	"github.com/ellisdon/azuredevops-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
 )

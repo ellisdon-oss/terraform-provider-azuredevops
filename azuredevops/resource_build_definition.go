@@ -2,7 +2,7 @@ package azuredevops
 
 import (
 	"fmt"
-	"github.com/ellisdon/azuredevops-go/azuredevops"
+	"github.com/ellisdon/azuredevops-go"
 	"github.com/ellisdon/terraform-provider-azuredevops/azuredevops/helper"
 	"github.com/hashicorp/terraform/helper/schema"
 	//"github.com/hashicorp/terraform/helper/validation"
