@@ -3,11 +3,13 @@ package azuredevops
 import (
 	"fmt"
 	"github.com/ellisdon/azuredevops-go"
-	//"github.com/ellisdon/terraform-provider-azuredevops/azuredevops/helper"
+	"github.com/ellisdon/terraform-provider-azuredevops/azuredevops/helper"
 	"github.com/hashicorp/terraform/helper/schema"
 	//"github.com/hashicorp/terraform/helper/validation"
+	"encoding/json"
 	"github.com/pkg/errors"
 	"strconv"
+	"strings"
 )
 
 func resourceReleaseDefinition() *schema.Resource {
@@ -16,9 +18,9 @@ func resourceReleaseDefinition() *schema.Resource {
 		Read:   resourceReleaseDefinitionRead,
 		Update: resourceReleaseDefinitionUpdate,
 		Delete: resourceReleaseDefinitionDelete,
-		//	Importer: &schema.ResourceImporter{
-		//		State: resourceReleaseDefinitionImport,
-		//	},
+		Importer: &schema.ResourceImporter{
+			State: resourceReleaseDefinitionImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
@@ -30,19 +32,9 @@ func resourceReleaseDefinition() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
-			"environment": &schema.Schema{
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
-						},
-					},
-				},
-			},
+			"environment":      helper.EnvironmentResourceSchema(),
+			"release_variable": helper.ReleaseVariableSchema(),
+			"artifact":         helper.ArtifactSchema(),
 			"project_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -58,6 +50,14 @@ func resourceReleaseDefinitionCreate(d *schema.ResourceData, meta interface{}) e
 	newReleaseDefinition := azuredevops.ReleaseDefinition{
 		Name:         d.Get("name").(string),
 		Environments: extractEnvironments(envs),
+	}
+
+	if v, ok := d.GetOk("release_variable"); ok {
+		newReleaseDefinition.Variables = extractReleaseVariables(v.(*schema.Set))
+	}
+
+	if v, ok := d.GetOk("artifact"); ok {
+		newReleaseDefinition.Artifacts = extractArtifact(v.(*schema.Set))
 	}
 
 	releaseDef, _, err := config.Client.ReleaseDefinitionsApi.CreateReleaseDefinition(config.Context, config.Organization, d.Get("project_id").(string), config.ApiVersion, newReleaseDefinition)
@@ -84,6 +84,13 @@ func resourceReleaseDefinitionUpdate(d *schema.ResourceData, meta interface{}) e
 		Revision:     int32(d.Get("revision").(int)),
 	}
 
+	if v, ok := d.GetOk("release_variable"); ok {
+		newReleaseDefinition.Variables = extractReleaseVariables(v.(*schema.Set))
+	}
+
+	if v, ok := d.GetOk("artifact"); ok {
+		newReleaseDefinition.Artifacts = extractArtifact(v.(*schema.Set))
+	}
 	_, _, err := config.Client.ReleaseDefinitionsApi.UpdateReleaseDefinition(config.Context, config.Organization, d.Get("project_id").(string), config.ApiVersion, newReleaseDefinition)
 
 	if err != nil {
@@ -105,6 +112,7 @@ func resourceReleaseDefinitionRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	d.Set("revision", res.Revision)
+	d.Set("name", res.Name)
 
 	return nil
 }
@@ -124,6 +132,7 @@ func resourceReleaseDefinitionDelete(d *schema.ResourceData, meta interface{}) e
 
 func extractEnvironments(environments []interface{}) []azuredevops.ReleaseDefinitionEnvironment {
 	var result []azuredevops.ReleaseDefinitionEnvironment
+	rank := 1
 	for _, env := range environments {
 		env := env.(map[string]interface{})
 		//{
@@ -146,19 +155,108 @@ func extractEnvironments(environments []interface{}) []azuredevops.ReleaseDefini
 		//          "name": "Run on agent",
 		//          "workflowTasks": []
 		//        }
+		conditions := env["condition"].([]interface{})
+		var finalConditions []azuredevops.Condition
+		for _, v := range conditions {
+
+			v := v.(map[string]interface{})
+
+			finalConditions = append(finalConditions, azuredevops.Condition{
+				ConditionType: v["condition_type"].(string),
+				Name:          v["name"].(string),
+				Value:         v["value"].(string),
+			})
+		}
+
+		var predeployapprovals []interface{}
+		var finalPreDeployApprovals []azuredevops.ReleaseDefinitionApprovalStep
+
+		finalApprovalOptions := azuredevops.ApprovalOptions{}
+
+		if env["pre_deploy_approval"] != nil && len(env["pre_deploy_approval"].([]interface{})) != 0 {
+
+			predeployapprovals = env["pre_deploy_approval"].([]interface{})[0].(map[string]interface{})["approvals"].([]interface{})
+
+			if env["pre_deploy_approval"].([]interface{})[0].(map[string]interface{})["options"] != nil {
+				options := env["pre_deploy_approval"].([]interface{})[0].(map[string]interface{})["options"]
+				if options.([]interface{})[0].(map[string]interface{})["execution_order"] != nil {
+					finalApprovalOptions.ExecutionOrder = options.([]interface{})[0].(map[string]interface{})["execution_order"].(string)
+				} else {
+					finalApprovalOptions.ExecutionOrder = "beforeGates"
+				}
+
+				finalApprovalOptions.TimeoutInMinutes = int32(options.([]interface{})[0].(map[string]interface{})["timeout_in_minutes"].(int))
+
+				if options.([]interface{})[0].(map[string]interface{})["release_creator_can_be_approver"] != nil {
+					finalApprovalOptions.ReleaseCreatorCanBeApprover = options.([]interface{})[0].(map[string]interface{})["release_creator_can_be_approver"].(bool)
+				} else {
+					finalApprovalOptions.ReleaseCreatorCanBeApprover = false
+				}
+			}
+		} else {
+			finalPreDeployApprovals = []azuredevops.ReleaseDefinitionApprovalStep{
+				azuredevops.ReleaseDefinitionApprovalStep{
+					Rank:             1,
+					IsAutomated:      true,
+					IsNotificationOn: false,
+				},
+			}
+		}
+		approvalRank := 1
+		for _, v := range predeployapprovals {
+
+			v := v.(map[string]interface{})
+
+			finalPreDeployApprovals = append(finalPreDeployApprovals, azuredevops.ReleaseDefinitionApprovalStep{
+				Rank: int32(approvalRank),
+				Approver: azuredevops.IdentityRef{
+					Id: v["approver_id"].(string),
+				},
+				IsAutomated:      v["is_automated"].(bool),
+				IsNotificationOn: v["is_notification_on"].(bool),
+			})
+
+			approvalRank++
+		}
+
+		deployPhases := env["deploy_phase"].([]interface{})
+		var finalDeployPhases []azuredevops.DeployPhase
+		for _, v := range deployPhases {
+
+			v := v.(map[string]interface{})
+
+			var finalTasks []azuredevops.WorkflowTask
+
+			tasks := v["workflow_task"].([]interface{})
+			for _, task := range tasks {
+				task := task.(map[string]interface{})
+				finalTasks = append(finalTasks, azuredevops.WorkflowTask{
+					AlwaysRun:       task["always_run"].(bool),
+					Condition:       task["condition"].(string),
+					Enabled:         task["enabled"].(bool),
+					Inputs:          task["inputs"].(map[string]interface{}),
+					Name:            task["name"].(string),
+					Version:         task["version"].(string),
+					TaskId:          task["task_id"].(string),
+					ContinueOnError: task["continue_on_error"].(bool),
+					DefinitionType:  task["definition_type"].(string),
+				})
+			}
+
+			finalDeployPhases = append(finalDeployPhases, azuredevops.DeployPhase{
+				DeploymentInput: v["deployment_input"].(map[string]interface{}),
+				PhaseType:       v["phase_type"].(string),
+				Rank:            int32(v["rank"].(int)),
+				Name:            v["name"].(string),
+				WorkflowTasks:   finalTasks,
+			})
+		}
 
 		result = append(result, azuredevops.ReleaseDefinitionEnvironment{
-			Name: env["name"].(string),
-			DeployPhases: []azuredevops.DeployPhase{
-				azuredevops.DeployPhase{
-					DeploymentInput: map[string]interface{}{
-						"queueId": 168,
-					},
-					PhaseType: "agentBasedDeployment",
-					Rank:      1,
-					Name:      "Test",
-				},
-			},
+			Name:         env["name"].(string),
+			Conditions:   finalConditions,
+			DeployPhases: finalDeployPhases,
+			Rank:         int32(rank),
 			RetentionPolicy: azuredevops.EnvironmentRetentionPolicy{
 				DaysToKeep:     30,
 				ReleasesToKeep: 3,
@@ -173,16 +271,14 @@ func extractEnvironments(environments []interface{}) []azuredevops.ReleaseDefini
 					},
 				},
 			},
+			Variables: extractReleaseVariables(env["variable"].(*schema.Set)),
 			PreDeployApprovals: azuredevops.ReleaseDefinitionApprovals{
-				Approvals: []azuredevops.ReleaseDefinitionApprovalStep{
-					azuredevops.ReleaseDefinitionApprovalStep{
-						Rank:             1,
-						IsAutomated:      true,
-						IsNotificationOn: false,
-					},
-				},
+				ApprovalOptions: finalApprovalOptions,
+				Approvals:       finalPreDeployApprovals,
 			},
 		})
+
+		rank++
 	}
 
 	return result
@@ -209,3 +305,59 @@ func extractEnvironments(environments []interface{}) []azuredevops.ReleaseDefini
 //		s[i] = fmt.Sprint(v)
 //	}
 //}
+
+func resourceReleaseDefinitionImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+
+	name := d.Id()
+	if name == "" {
+		return nil, fmt.Errorf("release definition id cannot be empty")
+	}
+
+	res := strings.Split(name, "/")
+	if len(res) != 2 {
+		return nil, fmt.Errorf("the format has to be in <project-id>/<release-definition-id>")
+	}
+
+	d.Set("project_id", res[0])
+	d.SetId(res[1])
+
+	return []*schema.ResourceData{d}, nil
+}
+
+func extractReleaseVariables(variables *schema.Set) map[string]azuredevops.ConfigurationVariableValue {
+
+	finalVariables := make(map[string]azuredevops.ConfigurationVariableValue)
+
+	for _, value := range variables.List() {
+		variableMap := value.(map[string]interface{})
+
+		finalVariables[variableMap["name"].(string)] = azuredevops.ConfigurationVariableValue{
+			IsSecret: variableMap["is_secret"].(bool),
+			Value:    variableMap["value"].(string),
+		}
+	}
+
+	return finalVariables
+}
+
+func extractArtifact(variables *schema.Set) []azuredevops.Artifact {
+
+	var finalArtifacts []azuredevops.Artifact
+	for _, value := range variables.List() {
+		artifact := value.(map[string]interface{})
+		refs := make(map[string]azuredevops.ArtifactSourceReference)
+
+		ref := artifact["definition_reference"].(string)
+
+		json.Unmarshal([]byte(ref), &refs)
+
+		finalArtifacts = append(finalArtifacts, azuredevops.Artifact{
+			DefinitionReference: refs,
+			Alias:               artifact["alias"].(string),
+			SourceId:            artifact["source_id"].(string),
+			Type:                artifact["type"].(string),
+		})
+	}
+
+	return finalArtifacts
+}

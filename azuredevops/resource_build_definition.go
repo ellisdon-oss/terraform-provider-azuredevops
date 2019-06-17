@@ -301,8 +301,9 @@ func resourceBuildDefinition() *schema.Resource {
 							Required: true,
 						},
 						"value": &schema.Schema{
-							Type:     schema.TypeString,
-							Required: true,
+							Type:      schema.TypeString,
+							Required:  true,
+							Sensitive: true,
 						},
 					},
 				},
@@ -370,7 +371,7 @@ func resourceBuildDefinitionCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	if v, ok := d.GetOk("build_variable"); ok {
-		newBuildDefinition.Variables = extractVariables(v.(*schema.Set))
+		newBuildDefinition.Variables = extractBuildVariables(v.(*schema.Set))
 	}
 
 	//	if v, ok := d.GetOk("demand"); ok {
@@ -526,7 +527,7 @@ func resourceBuildDefinitionUpdate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	if v, ok := d.GetOk("build_variable"); ok {
-		newBuildDefinition.Variables = extractVariables(v.(*schema.Set))
+		newBuildDefinition.Variables = extractBuildVariables(v.(*schema.Set))
 	}
 
 	//	if v, ok := d.GetOk("demand"); ok {
@@ -733,7 +734,7 @@ func convertInterfaceSliceToStringSlice(t []interface{}) []string {
 	return s
 }
 
-func extractVariables(variables *schema.Set) map[string]azuredevops.BuildDefinitionVariable {
+func extractBuildVariables(variables *schema.Set) map[string]azuredevops.BuildDefinitionVariable {
 
 	finalVariables := make(map[string]azuredevops.BuildDefinitionVariable)
 

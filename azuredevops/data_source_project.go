@@ -16,6 +16,10 @@ func dataSourceProject() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"name": &schema.Schema{
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"abbreviation": &schema.Schema{
 				Type:     schema.TypeString,
 				Computed: true,
@@ -73,6 +77,7 @@ func dataSourceProjectRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	d.Set("name", project.Name)
 	d.Set("abbreviation", project.Abbreviation)
 	d.Set("default_team_image_url", project.DefaultTeamImageUrl)
 	d.Set("description", project.Description)
