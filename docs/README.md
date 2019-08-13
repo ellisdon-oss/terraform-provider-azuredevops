@@ -2,12 +2,10 @@
 
 ### Data Sources
 
-Done
 - [azuredevops_agent_queue](./d/agent_queue.md)
 - [azuredevops_build_definition](./d/build_definition.md)
 - [azuredevops_group](./d/group.md)
 - [azuredevops_user](./d/user.md)
-
 - [azuredevops_project](./d/project.md)
 - [azuredevops_release_definition](./d/release_definition.md)
 - [azuredevops_service_endpoint](./d/service_endpoint.md)
