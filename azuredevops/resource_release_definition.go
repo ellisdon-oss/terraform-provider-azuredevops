@@ -34,7 +34,9 @@ func resourceReleaseDefinition() *schema.Resource {
 			},
 			"environment":      helper.EnvironmentResourceSchema(),
 			"release_variable": helper.ReleaseVariableSchema(),
-			"artifact":         helper.ArtifactSchema(),
+			//"release_variable_groups": helper.ReleaseVariableSchema(),
+			"artifact": helper.ArtifactSchema(),
+			"variable": helper.ArtifactSchema(),
 			"project_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -132,7 +134,6 @@ func resourceReleaseDefinitionDelete(d *schema.ResourceData, meta interface{}) e
 
 func extractEnvironments(environments []interface{}) []azuredevops.ReleaseDefinitionEnvironment {
 	var result []azuredevops.ReleaseDefinitionEnvironment
-	rank := 1
 	for _, env := range environments {
 		env := env.(map[string]interface{})
 		//{
@@ -256,7 +257,9 @@ func extractEnvironments(environments []interface{}) []azuredevops.ReleaseDefini
 			Name:         env["name"].(string),
 			Conditions:   finalConditions,
 			DeployPhases: finalDeployPhases,
-			Rank:         int32(rank),
+			Rank:         int32(env["rank"].(int)),
+			//VariableGroups: azuredevops.VariableGroup{
+			//}
 			RetentionPolicy: azuredevops.EnvironmentRetentionPolicy{
 				DaysToKeep:     30,
 				ReleasesToKeep: 3,
@@ -277,8 +280,6 @@ func extractEnvironments(environments []interface{}) []azuredevops.ReleaseDefini
 				Approvals:       finalPreDeployApprovals,
 			},
 		})
-
-		rank++
 	}
 
 	return result

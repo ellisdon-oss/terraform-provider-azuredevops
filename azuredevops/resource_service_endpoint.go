@@ -27,6 +27,11 @@ func resourceServiceEndpoint() *schema.Resource {
 				ForceNew: true,
 				Required: true,
 			},
+			"allow_all_pipelines": &schema.Schema{
+				Type:     schema.TypeBool,
+				Default:  false,
+				Optional: true,
+			},
 			"data": &schema.Schema{
 				Type:     schema.TypeMap,
 				Required: true,
@@ -107,6 +112,16 @@ func resourceServiceEndpointCreate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	d.SetId(serviceEndpoint.Id)
+
+	_, err2 := config.Client.PipelinePermissionsApi.SetPipelinePermissions(config.Context, config.Organization, d.Get("project_id").(string), d.Id(), "5.1-preview.1", azuredevops.PipelinePermissionRequest{
+		AllPipelines: azuredevops.PipelinePermissionRequestAllPipelines{
+			Authorized: d.Get("allow_all_pipelines").(bool),
+		},
+	})
+
+	if err2 != nil {
+		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
+	}
 	return resourceServiceEndpointRead(d, meta)
 }
 
@@ -132,6 +147,16 @@ func resourceServiceEndpointUpdate(d *schema.ResourceData, meta interface{}) err
 	}
 
 	d.SetId(serviceEndpoint.Id)
+
+	_, err2 := config.Client.PipelinePermissionsApi.SetPipelinePermissions(config.Context, config.Organization, d.Get("project_id").(string), d.Id(), "5.1-preview.1", azuredevops.PipelinePermissionRequest{
+		AllPipelines: azuredevops.PipelinePermissionRequestAllPipelines{
+			Authorized: d.Get("allow_all_pipelines").(bool),
+		},
+	})
+
+	if err2 != nil {
+		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
+	}
 
 	return resourceServiceEndpointRead(d, meta)
 }

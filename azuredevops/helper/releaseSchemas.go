@@ -7,16 +7,36 @@ func EnvironmentResourceSchema() *schema.Schema {
 		Type:     schema.TypeList,
 		Optional: true,
 		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"name": &schema.Schema{
-					Type:     schema.TypeString,
-					Required: true,
-				},
-				"pre_deploy_approval": preDeployApprovalSchema(),
-				"variable":            ReleaseVariableSchema(),
-				"condition":           conditionSchema(),
-				"deploy_phase":        deployPhaseSchema(),
-			},
+			Schema: EnvironmentSchema(),
+		},
+	}
+}
+
+func EnvironmentSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"name": &schema.Schema{
+			Type:     schema.TypeString,
+			Required: true,
+			ForceNew: true,
+		},
+		"rank": &schema.Schema{
+			Type:     schema.TypeInt,
+			Required: true,
+		},
+		"pre_deploy_approval": preDeployApprovalSchema(),
+		"variable":            ReleaseVariableSchema(),
+		"condition":           conditionSchema(),
+		"deploy_phase":        deployPhaseSchema(),
+	}
+}
+
+func EnvironmentSingleSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		MinItems: 1,
+		Required: true,
+		Elem: &schema.Resource{
+			Schema: EnvironmentSchema(),
 		},
 	}
 }

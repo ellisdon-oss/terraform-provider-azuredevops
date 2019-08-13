@@ -1,84 +1,47 @@
 # Terraform Provider for AzureDevOps
 
-Info to be added later
+## Requirements
+
+-    [Terraform](https://www.terraform.io/downloads.html) 0.12.0+
+-    [Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
+-    [AzureDevOps-Go](https://github.com/ellisdon-oss/azuredevops-go) 
+
+## Building The Provider
+
+```sh
+go get github.com/ellisdon-oss/terraform-provider-azuredevops
+```
+
+## Currently supported resource/data source
 
 
-## Go SDK(adapted from vsts-rest-api-specs)
+### Data Sources
 
-| Module Name | Completion |
-| ----------- | ---------- |
-| account | 0% |
-| artifacts | 0% |
-| artifactsPackageTypes | 0% |
-| build | 0% |
-| clt | 0% |
-| componentGovernance | 0% |
-| core | 10% |
-| dashboard | 0% |
-| distributedTask | 0% |
-| extensionManagement | 0% |
-| git | 0% |
-| governance | 0% |
-| graph | 0% |
-| hooks | 0% |
-| memberEntitlementManagement | 0% |
-| notification | 0% |
-| operations | 0% |
-| policy | 0% |
-| processDefinitions | 0% |
-| processadmin | 0% |
-| processes | 0% |
-| profile | 0% |
-| release | 0% |
-| search | 0% |
-| security | 0% |
-| serviceEndpoint | 0% |
-| symbol | 0% |
-| test | 0% |
-| testPlan | 0% |
-| tfvc | 0% |
-| tokenAdmin | 0% |
-| tokenAdministration | 0% |
-| wiki | 0% |
-| wit | 0% |
-| work | 0% |
+- azuredevops_agent_queue
+- azuredevops_build_definition
+- azuredevops_group
+- azuredevops_user
+- azuredevops_project
+- azuredevops_release_definition
+- azuredevops_service_endpoint
+- azuredevops_source_repository
+- azuredevops_task_group
+- azuredevops_variable_group
+- azuredevops_variable_groups
+- azuredevops_workflow_task
 
-## Terraform Provider Portion
+### Resources
 
-| Module Name | Completion |
-| ----------- | ---------- |
-| account | 0% |
-| artifacts | 0% |
-| artifactsPackageTypes | 0% |
-| build | 0% |
-| clt | 0% |
-| componentGovernance | 0% |
-| core | 100% |
-| dashboard | 0% |
-| distributedTask | 0% |
-| extensionManagement | 0% |
-| git | 0% |
-| governance | 0% |
-| graph | 0% |
-| hooks | 0% |
-| memberEntitlementManagement | 0% |
-| notification | 0% |
-| operations | 0% |
-| policy | 0% |
-| processDefinitions | 0% |
-| processadmin | 0% |
-| processes | 0% |
-| profile | 0% |
-| release | 0% |
-| search | 0% |
-| security | 0% |
-| serviceEndpoint | 0% |
-| symbol | 0% |
-| test | 0% |
-| testPlan | 0% |
-| tfvc | 0% |
-| tokenAdmin | 0% |
-| tokenAdministration | 0% |
-| wiki | 0% |
-| wit | 0% |
-| work | 0% |
+- azuredevops_build_definition
+- azuredevops_project
+- azuredevops_release_definition
+- azuredevops_release_environment
+- azuredevops_service_endpoint
+- azuredevops_service_hook
+- azuredevops_task_group
+- azuredevops_variable_group
+
+## Todo-List
+
+- [ ] Add Docker Image for provider
+- [ ] Full Documentation

@@ -5,6 +5,7 @@ import (
 	"github.com/ellisdon/azuredevops-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
+	"log"
 )
 
 func resourceVariableGroup() *schema.Resource {
@@ -76,7 +77,7 @@ func resourceVariableGroupRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 	group_id := d.Get("group_id").(int)
 
-	group, _, err := config.Client.VariablegroupsApi.Get(config.Context, config.Organization, d.Get("project_id").(string), int32(group_id), config.ApiVersion)
+	group, _, err := config.Client.VariablegroupsApi.Get(config.Context, config.Organization, d.Get("project_id").(string), int32(group_id), "5.1-preview.1")
 
 	if err != nil {
 		return err
@@ -139,7 +140,9 @@ func resourceVariableGroupCreate(d *schema.ResourceData, meta interface{}) error
 		Variables: variables,
 	}
 
-	group, _, err := config.Client.VariablegroupsApi.Add(config.Context, config.Organization, d.Get("project_id").(string), config.ApiVersion, newVariableGroup)
+	log.Printf(config.Organization)
+	log.Printf(d.Get("project_id").(string))
+	group, _, err := config.Client.VariablegroupsApi.Add(config.Context, config.Organization, d.Get("project_id").(string), "5.1-preview.1", newVariableGroup)
 
 	if err != nil {
 		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
@@ -170,7 +173,7 @@ func resourceVariableGroupUpdate(d *schema.ResourceData, meta interface{}) error
 		Variables: variables,
 	}
 
-	group, _, err := config.Client.VariablegroupsApi.Update(config.Context, config.Organization, d.Get("project_id").(string), int32(d.Get("group_id").(int)), config.ApiVersion, newVariableGroup)
+	group, _, err := config.Client.VariablegroupsApi.Update(config.Context, config.Organization, d.Get("project_id").(string), int32(d.Get("group_id").(int)), "5.1-preview.1", newVariableGroup)
 
 	if err != nil {
 		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
@@ -184,7 +187,7 @@ func resourceVariableGroupUpdate(d *schema.ResourceData, meta interface{}) error
 func resourceVariableGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	_, err := config.Client.VariablegroupsApi.Delete(config.Context, config.Organization, d.Get("project_id").(string), int32(d.Get("group_id").(int)), config.ApiVersion)
+	_, err := config.Client.VariablegroupsApi.Delete(config.Context, config.Organization, d.Get("project_id").(string), int32(d.Get("group_id").(int)), "5.1-preview.1")
 
 	if err != nil {
 		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
