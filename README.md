@@ -12,6 +12,11 @@
 go get github.com/ellisdon-oss/terraform-provider-azuredevops
 ```
 
+## Install The Provider
+
+1. Build the provider or grab the provider binary from the [release page](https://github.com/EllisDon-Aegean/terraform-provider-azuredevops/releases)
+2. Extra and copy the provider binary to the terraform global folder(Mac/Linux `~/.terraform.d/plugins` or Windows `%APPDATA%\terraform.d\plugins`)
+
 ## Currently supported resource/data source
 
 
