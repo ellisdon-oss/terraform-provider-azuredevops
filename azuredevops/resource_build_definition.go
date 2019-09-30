@@ -301,9 +301,8 @@ func resourceBuildDefinition() *schema.Resource {
 							Required: true,
 						},
 						"value": &schema.Schema{
-							Type:      schema.TypeString,
-							Required:  true,
-							Sensitive: true,
+							Type:     schema.TypeString,
+							Required: true,
 						},
 					},
 				},

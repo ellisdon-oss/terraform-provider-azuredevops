@@ -25,8 +25,13 @@ func EnvironmentSchema() map[string]*schema.Schema {
 		},
 		"pre_deploy_approval": preDeployApprovalSchema(),
 		"variable":            ReleaseVariableSchema(),
-		"condition":           conditionSchema(),
-		"deploy_phase":        deployPhaseSchema(),
+		"variable_groups": &schema.Schema{
+			Type:     schema.TypeList,
+			Optional: true,
+			Elem:     &schema.Schema{Type: schema.TypeInt},
+		},
+		"condition":    conditionSchema(),
+		"deploy_phase": deployPhaseSchema(),
 	}
 }
 
@@ -122,7 +127,7 @@ func conditionSchema() *schema.Schema {
 				},
 				"value": &schema.Schema{
 					Type:     schema.TypeString,
-					Required: true,
+					Optional: true,
 				},
 			},
 		},
@@ -229,9 +234,8 @@ func ReleaseVariableSchema() *schema.Schema {
 					Required: true,
 				},
 				"value": &schema.Schema{
-					Type:      schema.TypeString,
-					Required:  true,
-					Sensitive: true,
+					Type:     schema.TypeString,
+					Required: true,
 				},
 			},
 		},

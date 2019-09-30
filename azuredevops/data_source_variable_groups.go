@@ -44,10 +44,9 @@ func dataSourceVariableGroups() *schema.Resource {
 										Computed: true,
 									},
 									"value": &schema.Schema{
-										Type:      schema.TypeString,
-										Computed:  true,
-										Sensitive: true,
-										Optional:  true,
+										Type:     schema.TypeString,
+										Computed: true,
+										Optional: true,
 									},
 								},
 							},

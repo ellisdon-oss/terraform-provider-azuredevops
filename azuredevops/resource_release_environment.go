@@ -255,9 +255,8 @@ func convertEnvToMap(env azuredevops.ReleaseDefinitionEnvironment, oldEnv azured
 				Required: true,
 			},
 			"value": &schema.Schema{
-				Type:      schema.TypeString,
-				Sensitive: true,
-				Required:  true,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 		},
 	}
@@ -272,8 +271,14 @@ func convertEnvToMap(env azuredevops.ReleaseDefinitionEnvironment, oldEnv azured
 
 		for k2, l := range v.WorkflowTasks {
 			inputs := make(map[string]interface{})
-			for k, _ := range oldEnv.DeployPhases[k].WorkflowTasks[k2].Inputs {
-				inputs[k] = l.Inputs[k]
+			if oldEnv.Name != "" {
+				for k, _ := range oldEnv.DeployPhases[k].WorkflowTasks[k2].Inputs {
+					inputs[k] = l.Inputs[k]
+				}
+			} else {
+				for k, v := range l.Inputs {
+					inputs[k] = v
+				}
 			}
 
 			workflowTasks = append(workflowTasks, map[string]interface{}{
@@ -332,12 +337,18 @@ func convertEnvToMap(env azuredevops.ReleaseDefinitionEnvironment, oldEnv azured
 		})
 	}
 
-	old_variables := oldEnv.Variables
+	var old_variables map[string]azuredevops.ConfigurationVariableValue
+	if oldEnv.Name != "" {
+		old_variables = oldEnv.Variables
+	}
+
 	for k, v := range env.Variables {
 		if k != "" {
 			value := ""
 			if v.IsSecret {
-				value = old_variables[k].Value
+				if oldEnv.Name != "" {
+					value = old_variables[k].Value
+				}
 			} else {
 				value = v.Value
 			}
@@ -356,6 +367,7 @@ func convertEnvToMap(env azuredevops.ReleaseDefinitionEnvironment, oldEnv azured
 		"pre_deploy_approval": preDeployApprovals,
 		"condition":           conditions,
 		"variable":            schema.NewSet(schema.HashResource(testResource), variables),
+		"variable_groups":     env.VariableGroups,
 	}
 
 	return result

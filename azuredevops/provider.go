@@ -91,11 +91,14 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 
 	cfg := azuredevops.NewConfiguration()
 	client := azuredevops.NewAPIClient(cfg)
+	subscriptionClient := azuredevops.NewAPIClient(cfg)
+
 	config := Config{
-		Client:       client,
-		Organization: d.Get("organization").(string),
-		Context:      auth,
-		ApiVersion:   d.Get("api_version").(string),
+		Client:             client,
+		SubscriptionClient: subscriptionClient,
+		Organization:       d.Get("organization").(string),
+		Context:            auth,
+		ApiVersion:         d.Get("api_version").(string),
 	}
 
 	log.Printf("[INFO] AzureDevOps Client configured for use")

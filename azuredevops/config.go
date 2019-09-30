@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	Organization string
-	Client       *azuredevops.APIClient
-	Context      context.Context
-	ApiVersion   string
+	Organization       string
+	Client             *azuredevops.APIClient
+	SubscriptionClient *azuredevops.APIClient
+	Context            context.Context
+	ApiVersion         string
 }

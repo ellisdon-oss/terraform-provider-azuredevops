@@ -43,9 +43,8 @@ func resourceVariableGroup() *schema.Resource {
 							Required: true,
 						},
 						"value": &schema.Schema{
-							Type:      schema.TypeString,
-							Required:  true,
-							Sensitive: true,
+							Type:     schema.TypeString,
+							Required: true,
 						},
 					},
 				},
@@ -67,9 +66,8 @@ func resourceVariableGroupRead(d *schema.ResourceData, meta interface{}) error {
 				Required: true,
 			},
 			"value": &schema.Schema{
-				Type:      schema.TypeString,
-				Sensitive: true,
-				Required:  true,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 		},
 	}

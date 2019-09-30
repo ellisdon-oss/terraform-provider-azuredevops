@@ -1,6 +1,7 @@
 package azuredevops
 
 import (
+	"fmt"
 	"github.com/ellisdon/azuredevops-go"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/pkg/errors"
@@ -12,6 +13,9 @@ func resourceServiceHook() *schema.Resource {
 		Update: resourceServiceHookUpdate,
 		Delete: resourceServiceHookDelete,
 		Read:   resourceServiceHookRead,
+		Importer: &schema.ResourceImporter{
+			State: resourceServiceHookImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"publisher": &schema.Schema{
@@ -55,6 +59,7 @@ func resourceServiceHook() *schema.Resource {
 			"event_type": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 		},
 	}
@@ -63,9 +68,7 @@ func resourceServiceHook() *schema.Resource {
 func resourceServiceHookRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	serviceHook, _, err := config.Client.SubscriptionsApi.GetSubscription(config.Context, config.Organization, d.Id(), config.ApiVersion)
-
-	//HooksApi.GetServiceHookDetails
+	serviceHook, _, err := config.SubscriptionClient.SubscriptionsApi.GetSubscription(config.Context, config.Organization, d.Id(), config.ApiVersion)
 
 	if err != nil {
 		return err
@@ -76,11 +79,27 @@ func resourceServiceHookRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	d.Set("consumer.0.action_id", serviceHook.ConsumerActionId)
-	d.Set("consumer.0.id", serviceHook.ConsumerId)
-	d.Set("consumer.0.inputs", serviceHook.ConsumerInputs)
-	d.Set("publisher.0.id", serviceHook.PublisherId)
-	d.Set("publisher.0.inputs", serviceHook.PublisherInputs)
+	consumer := []map[string]interface{}{
+		{
+			"action_id": serviceHook.ConsumerActionId,
+			"id":        serviceHook.ConsumerId,
+			"inputs":    serviceHook.ConsumerInputs,
+		},
+	}
+
+	d.Set("consumer", consumer)
+
+	inputs := serviceHook.PublisherInputs
+	delete(inputs, "tfsSubscriptionId")
+	publisher := []map[string]interface{}{
+		{
+			"id":     serviceHook.PublisherId,
+			"inputs": inputs,
+		},
+	}
+
+	d.Set("publisher", publisher)
+
 	d.Set("event_type", serviceHook.EventType)
 	d.SetId(serviceHook.Id)
 
@@ -99,13 +118,21 @@ func resourceServiceHookCreate(d *schema.ResourceData, meta interface{}) error {
 		EventType:        d.Get("event_type").(string),
 	}
 
-	serviceHook, _, err := config.Client.SubscriptionsApi.CreateSubscription(config.Context, config.Organization, config.ApiVersion, newServiceHook)
+	switch newServiceHook.EventType {
+	case "ms.vss-release.deployment-completed-event":
+		config.SubscriptionClient.ChangeBasePath("https://vsrm.dev.azure.com")
+	default:
+		config.SubscriptionClient.ChangeBasePath("https://dev.azure.com")
+	}
+
+	serviceHook, _, err := config.SubscriptionClient.SubscriptionsApi.CreateSubscription(config.Context, config.Organization, config.ApiVersion, newServiceHook)
 
 	if err != nil {
 		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
 	}
 
 	d.SetId(serviceHook.Id)
+	config.SubscriptionClient.ChangeBasePath("https://dev.azure.com")
 	return resourceServiceHookRead(d, meta)
 }
 
@@ -121,7 +148,14 @@ func resourceServiceHookUpdate(d *schema.ResourceData, meta interface{}) error {
 		EventType:        d.Get("event_type").(string),
 	}
 
-	serviceHook, _, err := config.Client.SubscriptionsApi.ReplaceSubscription(config.Context, config.Organization, d.Id(), config.ApiVersion, newServiceHook)
+	switch newServiceHook.EventType {
+	case "ms.vss-release.deployment-completed-event":
+		config.SubscriptionClient.ChangeBasePath("https://vsrm.dev.azure.com")
+	default:
+		config.SubscriptionClient.ChangeBasePath("https://dev.azure.com")
+	}
+
+	serviceHook, _, err := config.SubscriptionClient.SubscriptionsApi.ReplaceSubscription(config.Context, config.Organization, d.Id(), config.ApiVersion, newServiceHook)
 
 	if err != nil {
 		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
@@ -129,17 +163,30 @@ func resourceServiceHookUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	d.SetId(serviceHook.Id)
 
+	config.SubscriptionClient.ChangeBasePath("https://dev.azure.com")
 	return resourceServiceHookRead(d, meta)
 }
 
 func resourceServiceHookDelete(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	_, err := config.Client.SubscriptionsApi.DeleteSubscription(config.Context, config.Organization, d.Id(), config.ApiVersion)
+	_, err := config.SubscriptionClient.SubscriptionsApi.DeleteSubscription(config.Context, config.Organization, d.Id(), config.ApiVersion)
 
 	if err != nil {
 		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
 	}
 
 	return nil
+}
+
+func resourceServiceHookImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+
+	name := d.Id()
+	if name == "" {
+		return nil, fmt.Errorf("serice hook id cannot be empty")
+	}
+
+	d.SetId(name)
+
+	return []*schema.ResourceData{d}, nil
 }

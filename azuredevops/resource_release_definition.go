@@ -32,11 +32,19 @@ func resourceReleaseDefinition() *schema.Resource {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
+			"path": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "\\",
+			},
 			"environment":      helper.EnvironmentResourceSchema(),
 			"release_variable": helper.ReleaseVariableSchema(),
-			//"release_variable_groups": helper.ReleaseVariableSchema(),
+			"release_variable_groups": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+			},
 			"artifact": helper.ArtifactSchema(),
-			"variable": helper.ArtifactSchema(),
 			"project_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -51,6 +59,7 @@ func resourceReleaseDefinitionCreate(d *schema.ResourceData, meta interface{}) e
 	envs := d.Get("environment").([]interface{})
 	newReleaseDefinition := azuredevops.ReleaseDefinition{
 		Name:         d.Get("name").(string),
+		Path:         d.Get("path").(string),
 		Environments: extractEnvironments(envs),
 	}
 
@@ -58,16 +67,26 @@ func resourceReleaseDefinitionCreate(d *schema.ResourceData, meta interface{}) e
 		newReleaseDefinition.Variables = extractReleaseVariables(v.(*schema.Set))
 	}
 
+	if l, ok := d.GetOk("release_variable_groups"); ok {
+		var varGroups []int32
+
+		for _, v := range l.([]interface{}) {
+			varGroups = append(varGroups, int32(v.(int)))
+		}
+
+		newReleaseDefinition.VariableGroups = varGroups
+	}
+
 	if v, ok := d.GetOk("artifact"); ok {
 		newReleaseDefinition.Artifacts = extractArtifact(v.(*schema.Set))
 	}
 
 	releaseDef, _, err := config.Client.ReleaseDefinitionsApi.CreateReleaseDefinition(config.Context, config.Organization, d.Get("project_id").(string), config.ApiVersion, newReleaseDefinition)
-	//
+
 	if err != nil {
 		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
 	}
-	//
+
 	d.SetId(fmt.Sprint(releaseDef.Id))
 
 	return resourceReleaseDefinitionRead(d, meta)
@@ -82,12 +101,22 @@ func resourceReleaseDefinitionUpdate(d *schema.ResourceData, meta interface{}) e
 	newReleaseDefinition := azuredevops.ReleaseDefinition{
 		Id:           int32(id),
 		Name:         d.Get("name").(string),
+		Path:         d.Get("path").(string),
 		Environments: extractEnvironments(envs),
 		Revision:     int32(d.Get("revision").(int)),
 	}
 
 	if v, ok := d.GetOk("release_variable"); ok {
 		newReleaseDefinition.Variables = extractReleaseVariables(v.(*schema.Set))
+	}
+
+	if l, ok := d.GetOk("release_variable_groups"); ok {
+		var varGroups []int32
+		for _, v := range l.([]interface{}) {
+			varGroups = append(varGroups, int32(v.(int)))
+
+		}
+		newReleaseDefinition.VariableGroups = varGroups
 	}
 
 	if v, ok := d.GetOk("artifact"); ok {
@@ -115,6 +144,36 @@ func resourceReleaseDefinitionRead(d *schema.ResourceData, meta interface{}) err
 
 	d.Set("revision", res.Revision)
 	d.Set("name", res.Name)
+	d.Set("path", res.Path)
+	d.Set("release_variable_groups", res.VariableGroups)
+
+	if v, ok := d.GetOk("release_variable"); ok {
+		d.Set("release_variable", readReleaseVariables(v.(*schema.Set), res.Variables))
+	} else {
+		d.Set("release_variable", readReleaseVariables(nil, res.Variables))
+	}
+
+	envs := d.Get("environment").([]interface{})
+	parsedEnvs := extractEnvironments(envs)
+	modifiedEnvs := map[string]azuredevops.ReleaseDefinitionEnvironment{}
+
+	for _, v := range parsedEnvs {
+		modifiedEnvs[v.Name] = v
+	}
+	names := []string{}
+
+	for _, v := range parsedEnvs {
+		names = append(names, v.Name)
+	}
+
+	result := []interface{}{}
+
+	for _, v := range res.Environments {
+		result = append(result, convertEnvToMap(v, modifiedEnvs[v.Name]))
+	}
+
+	d.Set("environment", result)
+	d.Set("artifact", readArtifact(res.Artifacts))
 
 	return nil
 }
@@ -253,13 +312,20 @@ func extractEnvironments(environments []interface{}) []azuredevops.ReleaseDefini
 			})
 		}
 
+		var varGroups []int32
+
+		if l := env["variable_groups"]; l != nil {
+			for _, v := range l.([]interface{}) {
+				varGroups = append(varGroups, int32(v.(int)))
+			}
+		}
+
 		result = append(result, azuredevops.ReleaseDefinitionEnvironment{
-			Name:         env["name"].(string),
-			Conditions:   finalConditions,
-			DeployPhases: finalDeployPhases,
-			Rank:         int32(env["rank"].(int)),
-			//VariableGroups: azuredevops.VariableGroup{
-			//}
+			Name:           env["name"].(string),
+			Conditions:     finalConditions,
+			DeployPhases:   finalDeployPhases,
+			Rank:           int32(env["rank"].(int)),
+			VariableGroups: varGroups,
 			RetentionPolicy: azuredevops.EnvironmentRetentionPolicy{
 				DaysToKeep:     30,
 				ReleasesToKeep: 3,
@@ -325,6 +391,57 @@ func resourceReleaseDefinitionImport(d *schema.ResourceData, meta interface{}) (
 	return []*schema.ResourceData{d}, nil
 }
 
+func readReleaseVariables(oldVars *schema.Set, vars map[string]azuredevops.ConfigurationVariableValue) *schema.Set {
+	testResource := &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"is_secret": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"name": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"value": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+		},
+	}
+
+	var variables []interface{}
+
+	old_variables := make(map[string]string)
+	if oldVars != nil {
+		for _, v := range oldVars.List() {
+			v := v.(map[string]interface{})
+			old_variables[v["name"].(string)] = v["value"].(string)
+		}
+	}
+
+	for k, v := range vars {
+		if k != "" {
+			value := ""
+			if v.IsSecret {
+				if oldVars != nil {
+					value = old_variables[k]
+				}
+			} else {
+				value = v.Value
+			}
+			variables = append(variables, map[string]interface{}{
+				"is_secret": v.IsSecret,
+				"value":     value,
+				"name":      k,
+			})
+		}
+	}
+
+	res := schema.NewSet(schema.HashResource(testResource), variables)
+	return res
+}
+
 func extractReleaseVariables(variables *schema.Set) map[string]azuredevops.ConfigurationVariableValue {
 
 	finalVariables := make(map[string]azuredevops.ConfigurationVariableValue)
@@ -361,4 +478,41 @@ func extractArtifact(variables *schema.Set) []azuredevops.Artifact {
 	}
 
 	return finalArtifacts
+}
+
+func readArtifact(artifacts []azuredevops.Artifact) *schema.Set {
+	var finalArtifacts []interface{}
+
+	testResource := &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"alias": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"source_id": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"type": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"definition_reference": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+		},
+	}
+
+	for _, value := range artifacts {
+		res, _ := json.Marshal(value.DefinitionReference)
+		finalArtifacts = append(finalArtifacts, map[string]interface{}{
+			"definition_reference": string(res),
+			"alias":                value.Alias,
+			"source_id":            value.SourceId,
+			"type":                 value.Type,
+		})
+	}
+
+	return schema.NewSet(schema.HashResource(testResource), finalArtifacts)
 }
