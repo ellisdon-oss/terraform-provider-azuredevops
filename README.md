@@ -17,34 +17,16 @@ go get github.com/ellisdon-oss/terraform-provider-azuredevops
 1. Build the provider or grab the provider binary from the [release page](https://github.com/EllisDon-Aegean/terraform-provider-azuredevops/releases)
 2. Extra and copy the provider binary to the terraform global folder(Mac/Linux `~/.terraform.d/plugins` or Windows `%APPDATA%\terraform.d\plugins`)
 
-## Currently supported resource/data source
+## [Docs](./docs)
 
+## Contributing
 
-### Data Sources
+1. Fork the repo
+2. Make the changes 
+3. Preferably before PR, the commits should be rebase and squash to 1 commit
+4. create a new PR (new features should be in a new features/<name> branch and patches should be in patches/<name> branch)
 
-- azuredevops_agent_queue
-- azuredevops_build_definition
-- azuredevops_group
-- azuredevops_user
-- azuredevops_project
-- azuredevops_release_definition
-- azuredevops_service_endpoint
-- azuredevops_source_repository
-- azuredevops_task_group
-- azuredevops_variable_group
-- azuredevops_variable_groups
-- azuredevops_workflow_task
-
-### Resources
-
-- azuredevops_build_definition
-- azuredevops_project
-- azuredevops_release_definition
-- azuredevops_release_environment
-- azuredevops_service_endpoint
-- azuredevops_service_hook
-- azuredevops_task_group
-- azuredevops_variable_group
+Note: please add yourself into CONTRIBUTORS.md before submitting PR
 
 ## Todo-List
 
