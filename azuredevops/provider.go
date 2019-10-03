@@ -4,8 +4,6 @@ import (
 	"os"
 
 	"context"
-	//	"github.com/ellisdon/azuredevops-go/core"
-	//	"github.com/ellisdon/azuredevops-go/operations"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/microsoft/azure-devops-go-api/azuredevops"
