@@ -4,7 +4,7 @@
 
 -    [Terraform](https://www.terraform.io/downloads.html) 0.12.0+
 -    [Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
--    [AzureDevOps-Go](https://github.com/ellisdon-oss/azuredevops-go) 
+-    [Microsoft's AzureDevOps Go SDK](https://github.com/microsoft/azure-devops-go-api) 
 
 ## Building The Provider
 
