@@ -37,7 +37,7 @@ func Provider() terraform.ResourceProvider {
 			//			"azuredevops_task_group":          resourceTaskGroup(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			//	"azuredevops_project":            dataSourceProject(),
+			"azuredevops_project": dataSourceProject(),
 			//	"azuredevops_service_endpoint":   dataSourceServiceEndpoint(),
 			//	"azuredevops_source_repository":  dataSourceSourceRepository(),
 			//	"azuredevops_workflow_task":      dataSourceWorkflowTask(),

@@ -3,7 +3,6 @@ package azuredevops
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/identity"
-	//"github.com/hashicorp/terraform/helper/validation"
 	"github.com/pkg/errors"
 )
 
