@@ -2,15 +2,11 @@ package azuredevops
 
 import (
 	"context"
-	//"github.com/ellisdon/azuredevops-go/core"
-	//"github.com/ellisdon/azuredevops-go/operations"
-	"github.com/ellisdon/azuredevops-go"
+	"github.com/microsoft/azure-devops-go-api/azuredevops"
 )
 
 type Config struct {
-	Organization       string
-	Client             *azuredevops.APIClient
-	SubscriptionClient *azuredevops.APIClient
-	Context            context.Context
-	ApiVersion         string
+	Organization string
+	Connection   *azuredevops.Connection
+	Context      context.Context
 }

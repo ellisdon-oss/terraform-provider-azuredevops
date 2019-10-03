@@ -1,11 +1,9 @@
 package azuredevops
 
 import (
-	"github.com/ellisdon/azuredevops-go"
-	"github.com/hashicorp/terraform/helper/schema"
-	//"github.com/hashicorp/terraform/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/microsoft/azure-devops-go-api/azuredevops/identity"
 	"github.com/pkg/errors"
-	"log"
 )
 
 func dataSourceGroup() *schema.Resource {
@@ -13,7 +11,7 @@ func dataSourceGroup() *schema.Resource {
 		Read: dataSourceGroupRead,
 
 		Schema: map[string]*schema.Schema{
-			"display_name": &schema.Schema{
+			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -24,34 +22,37 @@ func dataSourceGroup() *schema.Resource {
 func dataSourceGroupRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
 
-	query := azuredevops.QueryIdentity{
-		Query:           d.Get("display_name").(string),
-		IdentityTypes:   []string{"group"},
-		OperationScopes: []string{"ims"},
-	}
+	var searchFilter string
+	searchFilter = "DisplayName"
+	filterValue := d.Get("name").(string)
 
-	result, _, err := config.Client.IdentitiesApi.FindIdentity(config.Context, config.Organization, config.ApiVersion, query)
+	identityClient, err := identity.NewClient(config.Context, config.Connection)
 
 	if err != nil {
-		return errors.New(string(err.(azuredevops.GenericOpenAPIError).Body()))
+		return err
 	}
 
-	if len(result.Results) == 0 {
+	res, err := identityClient.ReadIdentities(config.Context, identity.ReadIdentitiesArgs{
+		SearchFilter: &searchFilter,
+		FilterValue:  &filterValue,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if len(*res) == 0 {
 		return errors.New("Group Not Found")
 	}
 
-	log.Print(result.Results[0])
-	d.SetId(result.Results[0].Identities[0].LocalId)
-	//	d.Set("abbreviation", project.Abbreviation)
-	//	d.Set("default_team_image_url", project.DefaultTeamImageUrl)
-	//	d.Set("description", project.Description)
-	//	d.Set("last_update_time", project.LastUpdateTime)
-	//	d.Set("revision", project.Revision)
-	//	d.Set("state", project.State)
-	//	d.Set("url", project.Url)
-	//	d.Set("visibility", project.Visibility)
-	//
-	//	d.SetId(project.Id)
+	for _, v := range *res {
+		identityType := v.Properties.(map[string]interface{})["SchemaClassName"].(map[string]interface{})["$value"].(string)
 
+		if identityType != "Group" {
+			return errors.New("Name is not a group")
+		}
+
+		d.SetId(v.Id.String())
+	}
 	return nil
 }
