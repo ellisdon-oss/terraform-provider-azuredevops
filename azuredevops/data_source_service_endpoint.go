@@ -1,7 +1,6 @@
 package azuredevops
 
 import (
-	"github.com/antihax/optional"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/serviceendpoint"
 	"github.com/pkg/errors"
