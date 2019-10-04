@@ -47,8 +47,8 @@ func Provider() terraform.ResourceProvider {
 			"azuredevops_release_definition": dataSourceReleaseDefinition(),
 			"azuredevops_agent_queue":        dataSourceAgentQueue(),
 			"azuredevops_task_group":         dataSourceTaskGroup(),
-			//"azuredevops_variable_group":     dataSourceVariableGroup(),
-			//"azuredevops_variable_groups":    dataSourceVariableGroups(),
+			"azuredevops_variable_group":     dataSourceVariableGroup(),
+			"azuredevops_variable_groups":    dataSourceVariableGroups(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
