@@ -33,7 +33,7 @@ Placeholder
 
 ### Requirements
 
-- You will need Go with GO111MODULE enabled
+- You will need Go with `GO111MODULE` enabled
 
 ### Build
 
