@@ -8,6 +8,7 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
+      * [AzureDevOps Reference](#azuredevops-reference)
    * [Table of Contents](#table-of-contents)
 
 ## Description
@@ -34,3 +35,6 @@ data "azuredevops_group" "default" {
 |------|-------------|
 | id | Group ID | 
 
+## AzureDevOps Reference
+
+- [AzureDevOps Group](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page)
