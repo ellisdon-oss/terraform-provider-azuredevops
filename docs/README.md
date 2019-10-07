@@ -1,14 +1,13 @@
-## Documentation Listing
+# Documentation Listing
 
 Table of Contents
 =================
 
-      * [Documentation Listing](#documentation-listing)
-         * [Data Sources](#data-sources)
-         * [Resources](#resources)
-   * [Table of Contents](#table-of-contents)
+   * [Documentation Listing](#documentation-listing)
+      * [Data Sources](#data-sources)
+      * [Resources](#resources)
 
-### Data Sources
+## Data Sources
 
 | Name | Description | Docs |
 |------|-------------|------|
@@ -25,7 +24,7 @@ Table of Contents
 | azuredevops_variable_groups | Variable Groups(Multiple Variable Group) | [Link](./d/variable_groups.md) |
 | azuredevops_workflow_task | Workflow Task(for Pipelines) | [Link](./d/workflow_task.md) |
 
-### Resources
+## Resources
 
 - [azuredevops_build_definition](./r/build_definition.md)
 - [azuredevops_project](./r/project.md)
@@ -35,4 +34,5 @@ Table of Contents
 - [azuredevops_service_hook](./r/service_hook.md)
 - [azuredevops_task_group](./r/task_group.md)
 - [azuredevops_variable_group](./r/variable_group.md)
+
 

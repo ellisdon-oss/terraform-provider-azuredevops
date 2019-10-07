@@ -9,7 +9,6 @@ Table of Contents
       * [Arguments](#arguments)
       * [Attributes](#attributes)
       * [AzureDevOps Reference](#azuredevops-reference)
-   * [Table of Contents](#table-of-contents)
 
 ## Description
 
