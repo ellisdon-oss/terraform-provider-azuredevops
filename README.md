@@ -101,7 +101,7 @@ ref: [Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/dev
 
 ### Creating Service Endpoint (Kubernetes)
 
-```
+```terraform
 ...
 
 resource "azuredevops_service_endpoint" "kubernetes" {
