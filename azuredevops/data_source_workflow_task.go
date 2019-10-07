@@ -1,6 +1,7 @@
 package azuredevops
 
 import (
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/release"
 	"github.com/pkg/errors"
@@ -51,7 +52,7 @@ func dataSourceWorkflowTaskRead(d *schema.ResourceData, meta interface{}) error 
 	return nil
 }
 
-func getTaskID(name string, tasks []release.DistributedWorkflowTask) string {
+func getTaskID(name string, tasks []distributedWorkflowTask) string {
 	for _, task := range tasks {
 
 		if (*task.Name) == name {
@@ -62,7 +63,7 @@ func getTaskID(name string, tasks []release.DistributedWorkflowTask) string {
 	return ""
 }
 
-func getAllTasks(config *Config) (*[]release.DistributedWorkflowTask, error) {
+func getAllTasks(config *Config) (*[]distributedWorkflowTask, error) {
 
 	releaseClient, err := release.NewClient(config.Context, config.Connection)
 
@@ -83,8 +84,13 @@ func getAllTasks(config *Config) (*[]release.DistributedWorkflowTask, error) {
 		return nil, err
 	}
 
-	var responseValue []release.DistributedWorkflowTask
+	var responseValue []distributedWorkflowTask
 	err = releaseClient.Client.UnmarshalCollectionBody(resp, &responseValue)
 
 	return &responseValue, err
+}
+
+type distributedWorkflowTask struct {
+	ID   *uuid.UUID `json:"id,omitempty"`
+	Name *string    `json:"name,omitempty"`
 }
