@@ -1,5 +1,15 @@
 # Data Source: Group
 
+Table of Contents
+=================
+
+   * [Data Source: Group](#data-source-group)
+      * [Description](#description)
+      * [Example](#example)
+      * [Arguments](#arguments)
+      * [Attributes](#attributes)
+   * [Table of Contents](#table-of-contents)
+
 ## Description
 
 A Data source to find AzureDevOps group (useful when doing approval step in release pipeline)
@@ -14,8 +24,13 @@ data "azuredevops_group" "default" {
 
 ## Arguments
 
-- `display_name`: (Required, string) The name on AzureDevOps UI for the group
+| Name | Type | Required/Optional | Description |
+|------|------|-------------------|-------------|
+| display_name | string | Required | The name on AzureDevOps UI for the group |
 
 ## Attributes
 
-- `id`: Group ID
+| Name | Description |
+|------|-------------|
+| id | Group ID | 
+
