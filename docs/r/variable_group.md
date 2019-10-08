@@ -62,7 +62,7 @@ resource "azuredevops_variable_group" "defaulut" {
 |------|------|-------------------|-------------|
 | name | string | Required | Variable name |
 | value | string | Required | Variable Value |
-| is_secret | boolean | Optional | Status of Value being secret, bool |
+| is_secret | boolean | Optional | Mark variable as secret or not |
 
 ## AzureDevOps Reference
 
