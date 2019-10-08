@@ -14,7 +14,7 @@ Table of Contents
 
 ## Description
 
-A Resource to manage service hook(slack, webhook, etc)
+A Resource to manage service endpoint(github, kubernetes, etc)
 
 ## Example
 
