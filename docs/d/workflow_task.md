@@ -38,5 +38,5 @@ data "azuredevops_workflow_task" "default" {
 
 ## AzureDevOps Reference
 
-- [AzureDevOps Task Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/tasks?view=azure-devops&tabs=yaml)
+- [AzureDevOps Task](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/tasks?view=azure-devops&tabs=yaml)
 
