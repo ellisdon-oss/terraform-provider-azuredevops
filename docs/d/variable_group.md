@@ -37,12 +37,12 @@ data "azuredevops_variable_group" "default" {
 
 ## Attributes
 
-| Name | Description | Notes |
-|------|-------------|-------|
-| id | User ID ||
-| group_id | Group ID ||
-| name | Group Name ||
-| variables | Variables of the Variable Group | check [Variable](#variable) |
+| Name | Description |
+|------|-------------|
+| id | User ID |
+| group_id | Group ID |
+| name | Group Name |
+| variables | Array of [Variables](#variable) |
 
 ## Extra
 
