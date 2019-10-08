@@ -10,6 +10,8 @@ Table of Contents
       * [Attributes](#attributes)
       * [Extra](#extra)
           * [Capabilities](#capabilities)
+          * [Version Control](#version-control)
+          * [Process Template](#process-template)
       * [AzureDevOps Reference](#azuredevops-reference)
 
 ## Description
