@@ -45,7 +45,7 @@ resource "azuredevops_project" "default" {
 | name | string | Required | Project Name |
 | description | string | Optional | Project Description |
 | visibility | string | Optional | Visibility of the project(public/private) |
-| capabilities | [capabilities] | Optional | Capabilities of the project(source control type,etc) |
+| capabilities | [capabilities](#capabilities) | Optional | Capabilities of the project(source control type,etc) |
 
 ## Attributes
 
