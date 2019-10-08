@@ -35,7 +35,6 @@ resource "azuredevops_variable_group" "default" {
     is_secret = true
   }
 }
-
 ```
 
 **NOTE:** full example can be found [here](../../examples/r/variable_group/main.tf)
