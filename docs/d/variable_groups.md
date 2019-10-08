@@ -9,7 +9,7 @@ Table of Contents
       * [Arguments](#arguments)
       * [Attributes](#attributes)
       * [Extra](#extra)
-         * [Variable](#variable-group)
+         * [Variable Group](#variable-group)
          * [Variable](#variable)
       * [AzureDevOps Reference](#azuredevops-reference)
 
