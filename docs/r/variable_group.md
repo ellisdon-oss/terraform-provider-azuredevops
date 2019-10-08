@@ -19,7 +19,7 @@ A Resource to manage variable group
 ## Example
 
 ```terraform
-resource "azuredevops_variable_group" "defaulut" {
+resource "azuredevops_variable_group" "default" {
   project_id = "<project id>"
 
   name = "a-variable-group"
