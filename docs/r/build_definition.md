@@ -35,7 +35,7 @@ resource "azuredevops_build_definition" "default" {
     name = "<source repository id>"
     url  = "<git repo url>""
     properties = {
-      <source repository properties>
+    #<source repository properties>
     }
 
     default_branch      = "develop"
