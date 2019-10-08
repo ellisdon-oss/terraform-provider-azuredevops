@@ -22,6 +22,8 @@ data "azuredevops_group" "default" {
 }
 ```
 
+**NOTE:** full example can be found [here](../../examples/d/group/main.tf)
+
 ## Arguments
 
 | Name | Type | Required/Optional | Description |
