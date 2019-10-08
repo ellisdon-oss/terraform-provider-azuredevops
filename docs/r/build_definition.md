@@ -22,7 +22,7 @@ Table of Contents
 
 ## Description
 
-A Resource to manage project in AzureDevOps
+A Resource to manage build definition in AzureDevOps
 
 ## Example
 
