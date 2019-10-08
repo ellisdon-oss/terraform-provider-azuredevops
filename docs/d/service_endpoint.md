@@ -3,7 +3,7 @@
 Table of Contents
 =================
 
-   * [Data Source: Release Definition](#data-source-release-definition)
+   * [Data Source: Service Endpoint](#data-source-service-endpoint)
       * [Description](#description)
       * [Example](#example)
       * [Arguments](#arguments)
