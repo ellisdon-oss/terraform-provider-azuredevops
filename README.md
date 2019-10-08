@@ -129,6 +129,8 @@ resource "azuredevops_service_endpoint" "kubernetes" {
 
 ref: [Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)
 
+More examples are in [here](./examples)
+
 ## [Docs](./docs)
 
 ## Contributing
