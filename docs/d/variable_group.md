@@ -8,7 +8,11 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
+      * [Extra](#extra)
+         * [Variable](#variable)
       * [AzureDevOps Reference](#azuredevops-reference)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
 ## Description
 
@@ -57,4 +61,3 @@ data "azuredevops_variable_group" "default" {
 ## AzureDevOps Reference
 
 - [AzureDevOps Variable Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml)
-
