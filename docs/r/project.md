@@ -3,7 +3,7 @@
 Table of Contents
 =================
 
-   * [Resource: Project](#resource-user)
+   * [Resource: Project](#resource-project)
       * [Description](#description)
       * [Example](#example)
       * [Arguments](#arguments)
