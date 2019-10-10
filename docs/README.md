@@ -21,7 +21,7 @@ provider "azuredevops" {
 }
 ```
 
-**NOTE:** Guide to get token are [here](../../examples/)
+**NOTE:** Guide to get token are [here](../examples/)
 
 ### Arguments
 
