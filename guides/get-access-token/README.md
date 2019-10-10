@@ -1,4 +1,4 @@
-## Examples 
+## Guide
 
 ### Getting a Access Token
 
