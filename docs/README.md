@@ -4,8 +4,31 @@ Table of Contents
 =================
 
    * [Documentation Listing](#documentation-listing)
+      * [Provider](#provider)
+        * [Example](#example)
+        * [Arguments](#arguments)
       * [Data Sources](#data-sources)
       * [Resources](#resources)
+
+## Provider
+
+### Examples
+
+```terraform
+provider "azuredevops" {
+  token = "<azuredevops token>"
+  organization_url = "https://dev.azure.com/<organization name>"
+}
+```
+
+**NOTE:** Guide to get token are [here](../../examples/)
+
+### Arguments
+
+| Name | Type | Required/Optional | Description |
+|------|------|-------------------|-------------|
+| token | string | Required | AzureDevOps token |
+| organization_url | string | Required | Organization URL |
 
 ## Data Sources
 
