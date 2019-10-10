@@ -34,8 +34,6 @@ resource "azuredevops_service_endpoint" "github" {
       accessToken = "<github-token>"
     }
   }
-
-  data = {}
 }
 ```
 
@@ -49,7 +47,7 @@ resource "azuredevops_service_endpoint" "github" {
 | type | string | Required | Service Endpoint Type(github, kubernetes, etc) |
 | project_id | string | Required | Project ID(which project the service endpoint will be create in) |
 | allow_all_pipelines | boolean | Optional | To allow all pipelines use this service endpoint right away |
-| data | map | Required | Data for the service endpoint(different for each service endpoint type) |
+| data | map | Optional | Data for the service endpoint(different for each service endpoint type) |
 | owner | string | Required | Owner of the Service Endpoint Type(not the user, but the type owner) |
 | url | string | Required | URL for the Service Endpoint |
 | authorization | [authorization](#authorization) | Required | Authorization data for the Service Endpoint |

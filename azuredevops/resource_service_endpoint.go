@@ -38,7 +38,7 @@ func resourceServiceEndpoint() *schema.Resource {
 			},
 			"data": &schema.Schema{
 				Type:     schema.TypeMap,
-				Required: true,
+				Optional: true,
 			},
 			"owner": &schema.Schema{
 				Type:     schema.TypeString,
@@ -113,7 +113,12 @@ func resourceServiceEndpointCreate(d *schema.ResourceData, meta interface{}) err
 	url := d.Get("url").(string)
 	endpointType := d.Get("type").(string)
 	projectID := d.Get("project_id").(string)
-	data := convertInterfaceToStringMap(d.Get("data").(map[string]interface{}))
+
+	data := make(map[string]string)
+
+	if v := d.Get("data"); v != nil {
+		data = convertInterfaceToStringMap(d.Get("data").(map[string]interface{}))
+	}
 
 	parameters := convertInterfaceToStringMap(d.Get("authorization.0.parameters").(map[string]interface{}))
 	scheme := d.Get("authorization.0.scheme").(string)
