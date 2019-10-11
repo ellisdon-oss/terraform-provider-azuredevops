@@ -15,3 +15,15 @@
 [External Maven Repository](externalmavenrepository.tf)
 
 [External NPM Registry](externalnpmregistry.tf)
+
+[External NuGet Feed](nuget.tf)
+
+[External Python Download Feed](externalPythonDownloadFeed.tf)
+
+[External Python Upload Feed](externalPythonUploadFeed.tf)
+
+[SSH](ssh.tf)
+
+[Azure Classic](azureclassic.tf)
+
+[Azure RM](azurerm.tf)
