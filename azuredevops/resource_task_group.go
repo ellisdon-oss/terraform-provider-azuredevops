@@ -200,7 +200,13 @@ func resourceTaskGroupRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("task", tasks)
 	d.Set("category", group.Category)
 	d.Set("inputs", *group.Inputs)
-	d.Set("runs_on", *group.RunsOn)
+
+	if v := d.Get("runs_on"); len(v.([]interface{})) == 0 {
+		if !sameStringSlice(*group.RunsOn, []string{"Agent", "DeploymentGroup"}) {
+			d.Set("runs_on", *group.RunsOn)
+		}
+	}
+
 	d.Set("revision", *group.Revision)
 	d.SetId(fmt.Sprintf("%s-%s", d.Get("project_id").(string), group.Id.String()))
 
