@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/taskagent"
+	"strings"
 )
 
 func resourceTaskGroup() *schema.Resource {
@@ -13,6 +14,9 @@ func resourceTaskGroup() *schema.Resource {
 		Update: resourceTaskGroupUpdate,
 		Delete: resourceTaskGroupDelete,
 		Read:   resourceTaskGroupRead,
+		Importer: &schema.ResourceImporter{
+			State: resourceTaskGroupImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"project_id": &schema.Schema{
@@ -22,6 +26,13 @@ func resourceTaskGroup() *schema.Resource {
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"runs_on": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 			"revision": &schema.Schema{
 				Type:     schema.TypeInt,
@@ -164,7 +175,7 @@ func resourceTaskGroupRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	if group.Id.String() == "" {
+	if group.Id == nil || group.Id.String() == "" {
 		d.SetId("")
 		return nil
 	}
@@ -189,6 +200,7 @@ func resourceTaskGroupRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("task", tasks)
 	d.Set("category", group.Category)
 	d.Set("inputs", *group.Inputs)
+	d.Set("runs_on", *group.RunsOn)
 	d.Set("revision", *group.Revision)
 	d.SetId(fmt.Sprintf("%s-%s", d.Get("project_id").(string), group.Id.String()))
 
@@ -264,10 +276,17 @@ func resourceTaskGroupCreate(d *schema.ResourceData, meta interface{}) error {
 	name := d.Get("name").(string)
 	category := d.Get("category").(string)
 
+	runsOn := make([]string, 0)
+
 	taskGroup := taskagent.TaskGroupCreateParameter{
 		Name:     &name,
 		Tasks:    &finalTasks,
 		Category: &category,
+	}
+
+	if v := d.Get("runs_on"); v != nil {
+		runsOn = convertInterfaceSliceToStringSlice(d.Get("runs_on").([]interface{}))
+		taskGroup.RunsOn = &runsOn
 	}
 
 	if v := d.Get("version"); len(v.([]interface{})) != 0 {
@@ -409,6 +428,12 @@ func resourceTaskGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	parsedGroupID, _ := uuid.Parse(groupID)
 	revision := d.Get("revision").(int)
 
+	runsOn := make([]string, 0)
+
+	if v := d.Get("runs_on"); v != nil {
+		runsOn = convertInterfaceSliceToStringSlice(d.Get("runs_on").([]interface{}))
+	}
+
 	taskGroup := taskagent.TaskGroupUpdateParameter{
 		Id:       &parsedGroupID,
 		Name:     &name,
@@ -421,6 +446,11 @@ func resourceTaskGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 			Minor:  group.Version.Minor,
 			Patch:  group.Version.Patch,
 		},
+	}
+
+	if v := d.Get("runs_on"); v != nil {
+		runsOn = convertInterfaceSliceToStringSlice(d.Get("runs_on").([]interface{}))
+		taskGroup.RunsOn = &runsOn
 	}
 
 	updatedGroup, err := agentClient.UpdateTaskGroup(config.Context, taskagent.UpdateTaskGroupArgs{
@@ -459,4 +489,22 @@ func resourceTaskGroupDelete(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	return nil
+}
+
+func resourceTaskGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+
+	name := d.Id()
+	if name == "" {
+		return nil, fmt.Errorf("task group id cannot be empty")
+	}
+
+	res := strings.Split(name, "/")
+	if len(res) != 2 {
+		return nil, fmt.Errorf("the format has to be in <project-id>/<task-group-id>")
+	}
+
+	d.Set("project_id", res[0])
+	d.Set("group_id", res[1])
+
+	return []*schema.ResourceData{d}, nil
 }

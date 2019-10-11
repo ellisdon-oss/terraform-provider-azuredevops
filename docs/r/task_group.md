@@ -47,6 +47,7 @@ resource "azuredevops_task_group" "helm" {
 |------|------|-------------------|-------------|
 | project_id | string | Required | Project ID |
 | name | string | Required | Task Group Name |
+| runs_on | list of string | Optional | Runs On Parameter(default to "Agent, DeploymentGroup") |
 | category | string | Optional | Task Group Category(default to Deploy) |
 | version | [version](#version) | Required | Task Group Version |
 | task | [task](#task) | Required | Tasks |

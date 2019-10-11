@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/taskagent"
 	"github.com/pkg/errors"
+	"strings"
 )
 
 func resourceVariableGroup() *schema.Resource {
@@ -13,6 +14,9 @@ func resourceVariableGroup() *schema.Resource {
 		Update: resourceVariableGroupUpdate,
 		Delete: resourceVariableGroupDelete,
 		Read:   resourceVariableGroupRead,
+		Importer: &schema.ResourceImporter{
+			State: resourceVariableGroupImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"project_id": &schema.Schema{
@@ -247,4 +251,22 @@ func resourceVariableGroupDelete(d *schema.ResourceData, meta interface{}) error
 	}
 
 	return nil
+}
+
+func resourceVariableGroupImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+
+	name := d.Id()
+	if name == "" {
+		return nil, fmt.Errorf("variable group id cannot be empty")
+	}
+
+	res := strings.Split(name, "/")
+	if len(res) != 2 {
+		return nil, fmt.Errorf("the format has to be in <project-id>/<variable-group-id>")
+	}
+
+	d.Set("project_id", res[0])
+	d.Set("group_id", res[1])
+
+	return []*schema.ResourceData{d}, nil
 }
