@@ -7,6 +7,7 @@ resource "azuredevops_service_endpoint" "bitbucket" {
   owner = "Library"
   type = "bitbucket"
 
+  // only accepted value is https://api.bitbucket.org
   url = "<bitbucket url>"
 
   authorization {
@@ -25,27 +26,28 @@ resource "azuredevops_service_endpoint" "bitbucket" {
   }
 }
 
-// OAuth2
-resource "azuredevops_service_endpoint" "bitbucket_oauth2" {
-  project_id = "<project id>"
-
-  name = "<endpoint name>"
-
-  owner = "Library"
-  type = "bitbucket"
-
-  url = "<bitbucket url>"
-
-  authorization {
-    scheme = "OAuth2"
-    
-    parameters = {
-      accessToken = "<guid>" // This can cause issue
-    }
-  }
-
-  data = {
-    displayName = "<display name>"
-    avatarUrl = "<avatar url>"
-  }
-}
+// OAuth2 - Not usable due to auth flow
+// resource "azuredevops_service_endpoint" "bitbucket_oauth2" {
+//   project_id = "<project id>"
+// 
+//   name = "<endpoint name>"
+// 
+//   owner = "Library"
+//   type = "bitbucket"
+// 
+//   url = "<bitbucket url>"
+// 
+//   authorization {
+//     scheme = "OAuth"
+//     
+//     parameters = {
+//       AccessToken = "<guid>"
+//       ConfigurationId = "<guid>" //Need more docs
+//     }
+//   }
+// 
+//   data = {
+//     displayName = "<display name>"
+//     avatarUrl = "<avatar url>"
+//   }
+// }

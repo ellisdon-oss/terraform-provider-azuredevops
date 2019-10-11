@@ -3,6 +3,7 @@ package azuredevops
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/serviceendpoint"
@@ -16,6 +17,9 @@ func resourceServiceEndpoint() *schema.Resource {
 		Update: resourceServiceEndpointUpdate,
 		Delete: resourceServiceEndpointDelete,
 		Read:   resourceServiceEndpointRead,
+		Importer: &schema.ResourceImporter{
+			State: resourceServiceEndpointImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"type": &schema.Schema{
@@ -90,7 +94,12 @@ func resourceServiceEndpointRead(d *schema.ResourceData, meta interface{}) error
 		return err
 	}
 
-	if *serviceEndpoint.Name == "" {
+	if serviceEndpoint == nil {
+		d.SetId("")
+		return nil
+	}
+
+	if serviceEndpoint.Name == nil {
 		d.SetId("")
 		return nil
 	}
@@ -273,4 +282,22 @@ func resourceServiceEndpointDelete(d *schema.ResourceData, meta interface{}) err
 	}
 
 	return nil
+}
+
+func resourceServiceEndpointImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+
+	name := d.Id()
+	if name == "" {
+		return nil, fmt.Errorf("service endpoint id cannot be empty")
+	}
+
+	res := strings.Split(name, "/")
+	if len(res) != 2 {
+		return nil, fmt.Errorf("the format has to be in <project-id>/<service-endpoint-id>")
+	}
+
+	d.Set("project_id", res[0])
+	d.SetId(res[1])
+
+	return []*schema.ResourceData{d}, nil
 }
