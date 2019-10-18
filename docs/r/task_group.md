@@ -11,6 +11,7 @@ Table of Contents
       * [Extra](#extra)
           * [Version](#version)
           * [Task](#task)
+          * [Input](#input)
       * [AzureDevOps Reference](#azuredevops-reference)
 
 ## Description
@@ -51,6 +52,7 @@ resource "azuredevops_task_group" "helm" {
 | category | string | Optional | Task Group Category(default to Deploy) |
 | version | [version](#version) | Required | Task Group Version |
 | task | [task](#task) | Required | Tasks |
+| input | collection of [input](#input) | Optional | Input Parameter |
 
 ## Attributes
 
@@ -84,6 +86,17 @@ resource "azuredevops_task_group" "helm" {
 | condition | string | Optional | [Condition](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/expressions?view=azure-devops#job-status-functions) of the task |
 | environment | map | Optional | Key/Value Map of Environment variables for task |
 | inputs | map | Required | Key/Value Map of settings for task |
+
+### Input
+
+| Name | Type | Required/Optional | Description |
+|------|------|-------------------|-------------|
+| name | string | Required | Name of the parameter |
+| label | string | Optional | Label of the parameter(empty for not displaying any label |
+| default | string | Optional | Default value of the parameter |
+| required | boolean | Optional | Is the parameter a required value |
+| help_text | string | Optional | Parameter description |
+| type | string | Required | Parameter type |
 
 ## AzureDevOps Reference
 

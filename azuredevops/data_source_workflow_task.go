@@ -3,7 +3,6 @@ package azuredevops
 import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/microsoft/azure-devops-go-api/azuredevops/release"
 	"github.com/pkg/errors"
 	"net/http"
 	"strings"
@@ -65,27 +64,24 @@ func getTaskID(name string, tasks []distributedWorkflowTask) string {
 
 func getAllTasks(config *Config) (*[]distributedWorkflowTask, error) {
 
-	releaseClient, err := release.NewClient(config.Context, config.Connection)
-
-	if err != nil {
-		return nil, err
-	}
+	fakeId, _ := uuid.Parse("efc2f575-36ef-48e9-b672-0c6fb4a48ac5")
+	generalClient, _ := config.Connection.GetClientByResourceAreaId(config.Context, fakeId)
 
 	fullUrl := strings.TrimRight(config.Connection.BaseUrl, "/") + "/" + strings.TrimLeft("_apis/distributedtask/tasks", "/")
 
-	req, err := releaseClient.Client.CreateRequestMessage(config.Context, http.MethodGet, fullUrl, "", nil, "application/json", "application/json", nil)
+	req, err := generalClient.CreateRequestMessage(config.Context, http.MethodGet, fullUrl, "", nil, "application/json", "application/json", nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := releaseClient.Client.SendRequest(req)
+	resp, err := generalClient.SendRequest(req)
 	if err != nil {
 		return nil, err
 	}
 
 	var responseValue []distributedWorkflowTask
-	err = releaseClient.Client.UnmarshalCollectionBody(resp, &responseValue)
+	err = generalClient.UnmarshalCollectionBody(resp, &responseValue)
 
 	return &responseValue, err
 }

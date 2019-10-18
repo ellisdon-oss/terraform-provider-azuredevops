@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/taskagent"
+	//"log"
 	"strings"
 )
 
@@ -37,6 +38,39 @@ func resourceTaskGroup() *schema.Resource {
 			"revision": &schema.Schema{
 				Type:     schema.TypeInt,
 				Computed: true,
+			},
+			"input": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"default": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"required": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
+						},
+						"name": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"label": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"type": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"help_text": &schema.Schema{
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
 			},
 			"version": &schema.Schema{
 				Type:     schema.TypeList,
@@ -196,10 +230,23 @@ func resourceTaskGroupRead(d *schema.ResourceData, meta interface{}) error {
 		})
 	}
 
+	var inputs []interface{}
+
+	for _, v := range *group.Inputs {
+		inputs = append(inputs, map[string]interface{}{
+			"name":      v["name"],
+			"help_text": v["helpMarkDown"],
+			"default":   v["defaultValue"],
+			"required":  v["required"],
+			"type":      v["type"],
+			"label":     v["label"],
+		})
+	}
+
 	d.Set("name", *group.Name)
 	d.Set("task", tasks)
 	d.Set("category", group.Category)
-	d.Set("inputs", *group.Inputs)
+	d.Set("input", inputs)
 
 	if v := d.Get("runs_on"); len(v.([]interface{})) == 0 {
 		if !sameStringSlice(*group.RunsOn, []string{"Agent", "DeploymentGroup"}) {
@@ -314,6 +361,35 @@ func resourceTaskGroupCreate(d *schema.ResourceData, meta interface{}) error {
 		taskGroup.Version = &version
 
 	}
+
+	inputs := make([]taskagent.TaskInputDefinition, 0)
+
+	if v := d.Get("input"); len(v.([]interface{})) != 0 {
+		v := v.([]interface{})
+		for _, l := range v {
+			t := l.(map[string]interface{})
+
+			name := t["name"].(string)
+			required := t["required"].(bool)
+			inputType := t["type"].(string)
+			label := t["label"].(string)
+			helpText := t["help_text"].(string)
+			defaultValue := t["default"].(string)
+
+			inputDef := taskagent.TaskInputDefinition{
+				"name":         name,
+				"required":     required,
+				"type":         inputType,
+				"helpMarkDown": helpText,
+				"defaultValue": defaultValue,
+				"label":        label,
+			}
+
+			inputs = append(inputs, inputDef)
+		}
+	}
+
+	taskGroup.Inputs = &inputs
 
 	agentClient, err := taskagent.NewClient(config.Context, config.Connection)
 
@@ -458,6 +534,35 @@ func resourceTaskGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 		runsOn = convertInterfaceSliceToStringSlice(d.Get("runs_on").([]interface{}))
 		taskGroup.RunsOn = &runsOn
 	}
+
+	inputs := make([]taskagent.TaskInputDefinition, 0)
+
+	if v := d.Get("input"); len(v.([]interface{})) != 0 {
+		v := v.([]interface{})
+		for _, l := range v {
+			t := l.(map[string]interface{})
+
+			name := t["name"].(string)
+			required := t["required"].(bool)
+			inputType := t["type"].(string)
+			label := t["label"].(string)
+			helpText := t["help_text"].(string)
+			defaultValue := t["default"].(string)
+
+			inputDef := taskagent.TaskInputDefinition{
+				"name":         name,
+				"required":     required,
+				"type":         inputType,
+				"helpMarkDown": helpText,
+				"defaultValue": defaultValue,
+				"label":        label,
+			}
+
+			inputs = append(inputs, inputDef)
+		}
+	}
+
+	taskGroup.Inputs = &inputs
 
 	updatedGroup, err := agentClient.UpdateTaskGroup(config.Context, taskagent.UpdateTaskGroupArgs{
 		TaskGroup:   &taskGroup,

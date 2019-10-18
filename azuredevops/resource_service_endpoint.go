@@ -174,13 +174,16 @@ func resourceServiceEndpointCreate(d *schema.ResourceData, meta interface{}) err
 		return marshalErr
 	}
 
-	req, err := endpointClient.Client.CreateRequestMessage(config.Context, http.MethodPatch, fullURL, "5.1-preview.1", bytes.NewReader(body), "application/json", "application/json", nil)
+	fakeId, _ := uuid.Parse("efc2f575-36ef-48e9-b672-0c6fb4a48ac5")
+	generalClient, _ := config.Connection.GetClientByResourceAreaId(config.Context, fakeId)
+
+	req, err := generalClient.CreateRequestMessage(config.Context, http.MethodPatch, fullURL, "5.1-preview.1", bytes.NewReader(body), "application/json", "application/json", nil)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = endpointClient.Client.SendRequest(req)
+	_, err = generalClient.SendRequest(req)
 	if err != nil {
 		return err
 	}
@@ -246,13 +249,17 @@ func resourceServiceEndpointUpdate(d *schema.ResourceData, meta interface{}) err
 		return marshalErr
 	}
 
-	req, err := endpointClient.Client.CreateRequestMessage(config.Context, http.MethodPatch, fullURL, "5.1-preview.1", bytes.NewReader(body), "application/json", "application/json", nil)
+	fakeId, _ := uuid.Parse("efc2f575-36ef-48e9-b672-0c6fb4a48ac5")
+
+	generalClient, _ := config.Connection.GetClientByResourceAreaId(config.Context, fakeId)
+
+	req, err := generalClient.CreateRequestMessage(config.Context, http.MethodPatch, fullURL, "5.1-preview.1", bytes.NewReader(body), "application/json", "application/json", nil)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = endpointClient.Client.SendRequest(req)
+	_, err = generalClient.SendRequest(req)
 	if err != nil {
 		return err
 	}
