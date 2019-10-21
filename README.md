@@ -13,8 +13,8 @@ Table of Contents
       * [Install The Provider](#install-the-provider)
       * [Examples](#examples)
          * [Creating a Project](#creating-a-project)
-         * [Creating Service Endpoint (GitHub)](#creating-service-endpoint-github)
          * [Creating Service Endpoint (Kubernetes)](#creating-service-endpoint-kubernetes)
+         * [Creating Service Endpoint (GitHub)](#creating-service-endpoint-github)
       * [<a href="./guides">Guides</a>](#guides)
       * [<a href="./docs">Docs</a>](#docs)
       * [Contributing](#contributing)
@@ -91,38 +91,6 @@ resource "azuredevops_project" "default" {
 
 ref: [Project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops)
 
-### Creating Service Endpoint (GitHub)
-<details>
-<summary>Code Example</summary>
-
-```terraform
-...
-
-resource "azuredevops_service_endpoint" "github" {
-  name       = "github-example"
-  owner      = "Library"
-  project_id = azuredevops_project.default.id
-  type       = "github"
-  url        = "http://github.com"
-
-  # To enable all Pipeline to use this service endpoint
-  allow_all_pipelines = true
-
-  authorization {
-    scheme = "PersonalAccessToken"
-    parameters = {
-      accessToken = "<github-token>"
-    }
-  }
-
-  data = {}
-}
-```
-
-ref: [Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)
-
-</details>
-
 ### Creating Service Endpoint (Kubernetes)
 
 <details>
@@ -151,6 +119,39 @@ resource "azuredevops_service_endpoint" "kubernetes" {
     acceptUntrustedCerts = "true"
     authorizationType    = "ServiceAccount"
   }
+}
+```
+
+ref: [Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)
+
+</details>
+
+
+### Creating Service Endpoint (GitHub)
+<details>
+<summary>Code Example</summary>
+
+```terraform
+...
+
+resource "azuredevops_service_endpoint" "github" {
+  name       = "github-example"
+  owner      = "Library"
+  project_id = azuredevops_project.default.id
+  type       = "github"
+  url        = "http://github.com"
+
+  # To enable all Pipeline to use this service endpoint
+  allow_all_pipelines = true
+
+  authorization {
+    scheme = "PersonalAccessToken"
+    parameters = {
+      accessToken = "<github-token>"
+    }
+  }
+
+  data = {}
 }
 ```
 
