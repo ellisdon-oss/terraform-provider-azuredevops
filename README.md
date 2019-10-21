@@ -5,6 +5,7 @@ Table of Contents
 
    * [Terraform Provider for AzureDevOps](#terraform-provider-for-azuredevops)
       * [About EllisDon-OSS](#about-ellisdon-oss)
+      * [Features](#features)
       * [Requirements](#requirements)
       * [Building The Provider](#building-the-provider)
          * [Requirements](#requirements-1)
@@ -23,6 +24,24 @@ Table of Contents
 ## About EllisDon-OSS
 
 Placeholder
+
+## Features
+<details>
+<summary>Features List</summary>
+
+- Query Users and Groups
+- Manage the lifecycle of Variable Group
+- Manage the lifecycle of Task Group
+- Manage the lifecycle of Service Endpoint of any type
+- Manage the lifecycle of Service hook of any type
+- Manage the lifecycle of Release Pipeline
+- Manage the partial section of Release Pipeline
+- Manage the lifecycle of Build Pipeline
+- Manage the lifecycle of Project
+- All Resources support import
+- Full Documentation
+
+</details>
 
 ## Requirements
 
@@ -73,6 +92,8 @@ resource "azuredevops_project" "default" {
 ref: [Project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops)
 
 ### Creating Service Endpoint (GitHub)
+<details>
+<summary>Code Example</summary>
 
 ```terraform
 ...
@@ -100,8 +121,12 @@ resource "azuredevops_service_endpoint" "github" {
 
 ref: [Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)
 
+</details>
+
 ### Creating Service Endpoint (Kubernetes)
 
+<details>
+<summary>Code Example</summary>
 ```terraform
 ...
 
@@ -129,6 +154,8 @@ resource "azuredevops_service_endpoint" "kubernetes" {
 ```
 
 ref: [Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)
+
+</details>
 
 **More examples are in [here](./examples)**
 
