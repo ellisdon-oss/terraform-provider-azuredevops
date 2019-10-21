@@ -127,6 +127,7 @@ ref: [Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/dev
 
 <details>
 <summary>Code Example</summary>
+
 ```terraform
 ...
 
