@@ -35,6 +35,7 @@ func Provider() terraform.ResourceProvider {
 			"azuredevops_service_hook":        resourceServiceHook(),
 			"azuredevops_variable_group":      resourceVariableGroup(),
 			"azuredevops_task_group":          resourceTaskGroup(),
+			"azuredevops_extension":           resourceExtension(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"azuredevops_project":            dataSourceProject(),
@@ -74,9 +75,11 @@ func envDefaultFuncAllowMissing(k string) schema.SchemaDefaultFunc {
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	connection := azuredevops.NewPatConnection(d.Get("organization_url").(string), d.Get("token").(string))
 
+	ctx := context.WithValue(context.Background(), "Organization", d.Get("organization_url").(string))
 	config := Config{
-		Context:    context.Background(),
-		Connection: connection,
+		Context:      ctx,
+		Connection:   connection,
+		Organization: d.Get("organization_url").(string),
 	}
 
 	log.Printf("[INFO] AzureDevOps Client configured for use")

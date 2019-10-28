@@ -59,3 +59,4 @@ provider "azuredevops" {
 | azuredevops_service_hook | Manage Service Hook(Slack, etc) | [Link](./r/service_hook.md) | [Link](../examples/r/service_hook/README.md) |
 | azuredevops_task_group | Manage Task Group | [Link](./r/task_group.md) | [Link](../examples/r/task_group/README.md) |
 | azuredevops_variable_group | Manage Variable Group | [Link](./r/variable_group.md) | [Link](../examples/r/variable_group/README.md) |
+| azuredevops_extension | Manage Extension | [Link](./r/extension.md) | [Link](../examples/r/extension/README.md) |
