@@ -31,7 +31,7 @@ resource "azuredevops_extension" "default" {
 |------|------|-------------------|-------------|
 | publisher | string | Required | Publisher Name |
 | name | string | Required | Extension Name |
-| version | string | Optional | Version of Extension to install(no affect on Hosted AzureDevOps since it auto update to latest version) |
+| version | string | Optional | Version of Extension to install(no effect on Hosted AzureDevOps since it auto update to latest version) |
 | state | string | Optional | "none"(default) for enable, and "disabled" to disable the extension |
 
 ## Attributes
