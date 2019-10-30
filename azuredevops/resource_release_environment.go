@@ -324,10 +324,15 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 
 		for k2, l := range val {
 			inputs := make(map[string]interface{})
-			if oldEnv.Name != nil && *oldEnv.Name != "" {
-				oldInputs := (*oldEnv.DeployPhases)[k].(map[string]interface{})["workflowTasks"].([]release.WorkflowTask)[k2].Inputs
-				for m := range *oldInputs {
-					inputs[m] = l.(map[string]interface{})["inputs"].(map[string]interface{})[m]
+			if oldEnv.Name != nil && oldEnv.DeployPhases != nil && *oldEnv.Name != "" {
+				phase := (*oldEnv.DeployPhases)[k]
+				if k2 < len(phase.(map[string]interface{})["workflowTasks"].([]release.WorkflowTask)) && phase.(map[string]interface{})["workflowTasks"].([]release.WorkflowTask)[k2].Name == l.(map[string]interface{})["name"] {
+					oldInputs := phase.(map[string]interface{})["workflowTasks"].([]release.WorkflowTask)[k2].Inputs
+					for m := range *oldInputs {
+						inputs[m] = l.(map[string]interface{})["inputs"].(map[string]interface{})[m]
+					}
+				} else {
+					inputs = l.(map[string]interface{})["inputs"].(map[string]interface{})
 				}
 			} else {
 				for k, v := range l.(map[string]interface{})["inputs"].(map[string]interface{}) {

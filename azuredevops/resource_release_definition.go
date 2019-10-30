@@ -45,6 +45,7 @@ func resourceReleaseDefinition() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeInt},
 			},
 			"artifact": helper.ArtifactSchema(),
+			"trigger":  helper.TriggerSchema(),
 			"project_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -84,6 +85,11 @@ func resourceReleaseDefinitionCreate(d *schema.ResourceData, meta interface{}) e
 	if v, ok := d.GetOk("artifact"); ok {
 		artifacts := extractArtifact(v.(*schema.Set))
 		newReleaseDefinition.Artifacts = &artifacts
+	}
+
+	if v, ok := d.GetOk("trigger"); ok {
+		triggers := extractTrigger(v.(*schema.Set))
+		newReleaseDefinition.Triggers = &triggers
 	}
 
 	releaseClient, err := release.NewClient(config.Context, config.Connection)
@@ -145,6 +151,11 @@ func resourceReleaseDefinitionUpdate(d *schema.ResourceData, meta interface{}) e
 	if v, ok := d.GetOk("artifact"); ok {
 		artifacts := extractArtifact(v.(*schema.Set))
 		newReleaseDefinition.Artifacts = &artifacts
+	}
+
+	if v, ok := d.GetOk("trigger"); ok {
+		triggers := extractTrigger(v.(*schema.Set))
+		newReleaseDefinition.Triggers = &triggers
 	}
 
 	releaseClient, err := release.NewClient(config.Context, config.Connection)
@@ -222,6 +233,7 @@ func resourceReleaseDefinitionRead(d *schema.ResourceData, meta interface{}) err
 
 	d.Set("environment", result)
 	d.Set("artifact", readArtifact(*res.Artifacts))
+	d.Set("trigger", readTrigger(*res.Triggers))
 
 	return nil
 }
@@ -594,6 +606,26 @@ func extractArtifact(variables *schema.Set) []release.Artifact {
 	return finalArtifacts
 }
 
+func extractTrigger(variables *schema.Set) []interface{} {
+
+	var finalTriggers []interface{}
+	for _, value := range variables.List() {
+		artifact := value.(map[string]interface{})
+
+		alias := artifact["alias"].(string)
+		triggerType := artifact["trigger_type"].(string)
+		branchFilters := artifact["branch_filters"].([]interface{})
+
+		finalTriggers = append(finalTriggers, map[string]interface{}{
+			"alias":         alias,
+			"triggerType":   triggerType,
+			"branchFilters": branchFilters,
+		})
+	}
+
+	return finalTriggers
+}
+
 func readArtifact(artifacts []release.Artifact) *schema.Set {
 	var finalArtifacts []interface{}
 
@@ -629,4 +661,37 @@ func readArtifact(artifacts []release.Artifact) *schema.Set {
 	}
 
 	return schema.NewSet(schema.HashResource(testResource), finalArtifacts)
+}
+
+func readTrigger(triggers []interface{}) *schema.Set {
+	var finalTriggers []interface{}
+
+	testResource := &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"alias": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"trigger_type": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"branch_filters": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+		},
+	}
+
+	for _, value := range triggers {
+		value := value.(map[string]interface{})
+		finalTriggers = append(finalTriggers, map[string]interface{}{
+			"alias":          value["alias"],
+			"trigger_type":   value["triggerType"],
+			"branch_filters": value["branchFilters"],
+		})
+	}
+
+	return schema.NewSet(schema.HashResource(testResource), finalTriggers)
 }

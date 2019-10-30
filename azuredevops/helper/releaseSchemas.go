@@ -268,3 +268,27 @@ func ArtifactSchema() *schema.Schema {
 		},
 	}
 }
+
+func TriggerSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeSet,
+		Optional: true,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"alias": &schema.Schema{
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"trigger_type": &schema.Schema{
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"branch_filters": &schema.Schema{
+					Type:     schema.TypeList,
+					Optional: true,
+					Elem:     &schema.Schema{Type: schema.TypeString},
+				},
+			},
+		},
+	}
+}

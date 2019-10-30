@@ -17,6 +17,7 @@ Table of Contents
           * [Deploy Phase](#deploy-phase)
           * [Workflow Task](#workflow-task)
           * [Artifact](#artifact)
+          * [Trigger](#trigger)
           * [Release Variable](#release-variable)
       * [AzureDevOps Reference](#azuredevops-reference)
 
@@ -118,10 +119,11 @@ resource "azuredevops_release_definition" "default" {
 | name | string | Required | Release Definition Name |
 | project_id | string | Required | Project ID |
 | path | string | Optional | Folder path to store release definition into(default to `\\`) |
-| environment | [environment](#environment) | Optional | Release Stages |
+| environment | [environment](#environment)(can be multiple) | Optional | Release Stages |
 | release_variable | [release_variable](#release-variable) | Optional | Release Variables |
 | release_variable_groups | list of integers | Optional | IDs of variable groups that will get associate into the release pipeline |
-| artifact | [artifact](#artifact) | Optional | Artifact for the release pipeline |
+| artifact | [artifact](#artifact)(can be multiple) | Optional | Artifacts for the release pipeline |
+| trigger | [trigger](#artifact)(can be multiple) | Optional | Triggers for the release pipeline |
 
 ## Attributes
 
@@ -206,6 +208,14 @@ resource "azuredevops_release_definition" "default" {
 | source_id | string | Required | source setting for artifact |
 | type | string | Required | artifact type |
 | definition_reference | string | Required | JSON string of the extra definition reference(example can be found [here](../../examples/r/release_definition/main.tf) |
+
+### Trigger
+
+| Name | Type | Required/Optional | Description |
+|------|------|-------------------|-------------|
+| alias | string | Required | alias for target artifact(example `drop`) |
+| branch_filters | list of string | Required | branch filters for repo |
+| trigger_type | string | Required | Trigger type(example `sourceRepo`) |
 
 ### Release Variable
 
