@@ -324,7 +324,7 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 
 		for k2, l := range val {
 			inputs := make(map[string]interface{})
-			if *oldEnv.Name != "" {
+			if oldEnv.Name != nil && *oldEnv.Name != "" {
 				oldInputs := (*oldEnv.DeployPhases)[k].(map[string]interface{})["workflowTasks"].([]release.WorkflowTask)[k2].Inputs
 				for m := range *oldInputs {
 					inputs[m] = l.(map[string]interface{})["inputs"].(map[string]interface{})[m]
@@ -402,7 +402,7 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 
 	var oldVariables map[string]release.ConfigurationVariableValue
 
-	if *oldEnv.Name != "" {
+	if oldEnv.Name != nil && *oldEnv.Name != "" {
 		oldVariables = *oldEnv.Variables
 	}
 
