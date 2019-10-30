@@ -29,6 +29,7 @@ data "azuredevops_workflow_task" "default" {
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
 | name | string | Required | Task Name |
+| wait | integer | Optional | Wait time for reading, useful when reading extension tasks |
 
 ## Attributes
 

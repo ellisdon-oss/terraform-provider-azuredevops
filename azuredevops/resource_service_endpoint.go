@@ -63,8 +63,9 @@ func resourceServiceEndpoint() *schema.Resource {
 							Required: true,
 						},
 						"parameters": &schema.Schema{
-							Type:     schema.TypeMap,
-							Required: true,
+							Type:      schema.TypeMap,
+							Sensitive: true,
+							Required:  true,
 						},
 					},
 				},

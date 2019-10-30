@@ -61,6 +61,10 @@ func resourceExtensionRead(d *schema.ResourceData, meta interface{}) error {
 	})
 
 	if err != nil {
+		if strings.Contains(err.Error(), "TF1590003") {
+			d.SetId("")
+			return nil
+		}
 		return err
 	}
 

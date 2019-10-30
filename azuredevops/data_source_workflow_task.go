@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func dataSourceWorkflowTask() *schema.Resource {
@@ -17,12 +18,21 @@ func dataSourceWorkflowTask() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"wait": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  0,
+			},
 		},
 	}
 }
 
 func dataSourceWorkflowTaskRead(d *schema.ResourceData, meta interface{}) error {
 	config := meta.(*Config)
+
+	wait := d.Get("wait").(int)
+
+	time.Sleep(time.Duration(wait) * time.Second)
 
 	tasks, err := getAllTasks(config)
 
@@ -37,16 +47,6 @@ func dataSourceWorkflowTaskRead(d *schema.ResourceData, meta interface{}) error 
 	}
 
 	d.SetId(id)
-	//	d.Set("abbreviation", project.Abbreviation)
-	//	d.Set("default_team_image_url", project.DefaultTeamImageUrl)
-	//	d.Set("description", project.Description)
-	//	d.Set("last_update_time", project.LastUpdateTime)
-	//	d.Set("revision", project.Revision)
-	//	d.Set("state", project.State)
-	//	d.Set("url", project.Url)
-	//	d.Set("visibility", project.Visibility)
-	//
-	//	d.SetId(project.Id)
 
 	return nil
 }
