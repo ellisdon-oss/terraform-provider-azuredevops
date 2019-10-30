@@ -18,6 +18,10 @@ func dataSourceWorkflowTask() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"extension_id": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"wait": &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
