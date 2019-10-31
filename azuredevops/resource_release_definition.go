@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/release"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/webapi"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -198,7 +199,9 @@ func resourceReleaseDefinitionRead(d *schema.ResourceData, meta interface{}) err
 	})
 
 	if err != nil {
-		return err
+		d.SetId("")
+		log.Println(err)
+		return nil
 	}
 
 	d.Set("revision", *res.Revision)
