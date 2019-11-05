@@ -356,7 +356,9 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 		}
 		deploymentInput := make(map[string]interface{})
 
-		deploymentInput["queueId"] = strconv.Itoa(int(v.(map[string]interface{})["deploymentInput"].(map[string]interface{})["queueId"].(float64)))
+		if v.(map[string]interface{})["deploymentInput"].(map[string]interface{})["queueId"] != nil {
+			deploymentInput["queueId"] = strconv.Itoa(int(v.(map[string]interface{})["deploymentInput"].(map[string]interface{})["queueId"].(float64)))
+		}
 
 		//log.Panic(deploymentInput)
 		deployPhases = append(deployPhases, map[string]interface{}{

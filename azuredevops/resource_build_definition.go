@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/build"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/core"
+	"log"
 
 	"strconv"
 	"strings"
@@ -65,9 +66,84 @@ func resourceBuildDefinition() *schema.Resource {
 							Default:  2,
 						},
 						"yaml_file_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-							Default:  "./azure-pipelines.yml",
+							Type:          schema.TypeString,
+							Optional:      true,
+							Default:       "./azure-pipelines.yml",
+							ConflictsWith: []string{"process.0.target", "process.0.phase"},
+						},
+						"target": &schema.Schema{
+							Type:          schema.TypeList,
+							MaxItems:      1,
+							Optional:      true,
+							ConflictsWith: []string{"process.0.yaml_file_name"},
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"agent_specification": &schema.Schema{
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+								},
+							},
+						},
+						"phase": &schema.Schema{
+							Type:          schema.TypeList,
+							Optional:      true,
+							ConflictsWith: []string{"process.0.yaml_file_name"},
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"condition": &schema.Schema{
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "succeeded()",
+									},
+									"job_authorization_scope": &schema.Schema{
+										Type:     schema.TypeString,
+										Optional: true,
+										Default:  "projectCollection",
+									},
+									"name": &schema.Schema{
+										Type:     schema.TypeString,
+										Required: true,
+									},
+									"target": &schema.Schema{
+										Type:     schema.TypeList,
+										MaxItems: 1,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"type": &schema.Schema{
+													Type:     schema.TypeInt,
+													Optional: true,
+													Default:  1,
+												},
+												"demands": &schema.Schema{
+													Type:     schema.TypeList,
+													Optional: true,
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+												"allow_scripts_auth_access_option": &schema.Schema{
+													Type:     schema.TypeBool,
+													Optional: true,
+													Default:  false,
+												},
+												"queue": &schema.Schema{
+													Type:     schema.TypeInt,
+													Optional: true,
+													Default:  false,
+												},
+												"agent_specification": &schema.Schema{
+													Type:     schema.TypeString,
+													Optional: true,
+													Default:  false,
+												},
+											},
+										},
+									},
+									"step": helper.WorkflowTaskSchema(),
+								},
+							},
 						},
 					},
 				},
@@ -330,10 +406,95 @@ func resourceBuildDefinitionCreate(d *schema.ResourceData, meta interface{}) err
 	var processType int32
 	var yamlFileName string
 
+	var target map[string]interface{}
+	var phases []map[string]interface{}
+
 	if v, ok := d.GetOk("process"); ok {
 		process := v.([]interface{})[0].(map[string]interface{})
 		processType = int32(process["type"].(int))
-		yamlFileName = process["yaml_file_name"].(string)
+
+		if processType == 1 {
+			if len(process["target"].([]interface{})) != 0 {
+				agentSpecification := process["target"].([]interface{})[0].(map[string]string)["agent_specification"]
+
+				target["agentSpecification"] = map[string]interface{}{
+					"identifier": agentSpecification,
+				}
+			}
+
+			phases = make([]map[string]interface{}, 0)
+
+			for _, v := range process["phase"].([]interface{}) {
+				v := v.(map[string]interface{})
+
+				phase := map[string]interface{}{
+					"condition":             v["condition"],
+					"jobAuthorizationScope": v["job_authorization_scope"],
+				}
+
+				if len(v["target"].([]interface{})) != 0 {
+					target := v["target"].([]interface{})[0].(map[string]interface{})
+					phase["target"] = map[string]interface{}{
+						"allowScriptsAuthAccessOption": target["allow_scripts_auth_access_option"],
+						"type":                         target["type"],
+						"demands":                      target["demands"],
+					}
+
+					agentSpecification := process["target"].([]interface{})[0].(map[string]string)["agent_specification"]
+					queue := process["target"].([]interface{})[0].(map[string]int)["queue"]
+
+					if agentSpecification != "" {
+						phase["target"].(map[string]interface{})["agentSpecification"] = map[string]interface{}{
+							"identifier": agentSpecification,
+						}
+					}
+
+					if queue != 0 {
+						phase["target"].(map[string]interface{})["agentSpecification"] = map[string]interface{}{
+							"id": queue,
+						}
+					}
+				}
+
+				var finalTasks []map[string]interface{}
+
+				tasks := v["step"].([]interface{})
+				for _, task := range tasks {
+					task := task.(map[string]interface{})
+					alwaysRun := task["always_run"].(bool)
+					condition := task["condition"].(string)
+					enabled := task["enabled"].(bool)
+					inputs := convertInterfaceToStringMap(task["inputs"].(map[string]interface{}))
+					taskName := task["name"].(string)
+					taskID := task["task_id"].(string)
+					version := task["version"].(string)
+					continueOnError := task["continue_on_error"].(bool)
+					definitionType := task["definition_type"].(string)
+
+					finalTasks = append(finalTasks, map[string]interface{}{
+						"alwaysRun":   &alwaysRun,
+						"condition":   &condition,
+						"enabled":     &enabled,
+						"inputs":      &inputs,
+						"displayName": &taskName,
+						"task": map[string]interface{}{
+							"id":             &taskID,
+							"definitionType": &definitionType,
+							"versionSpec":    &version,
+						},
+						"continueOnError": &continueOnError,
+					})
+				}
+
+				phase["steps"] = finalTasks
+
+				phases = append(phases, phase)
+			}
+
+		} else {
+			yamlFileName = process["yaml_file_name"].(string)
+		}
+
 	} else {
 		processType = 2
 		yamlFileName = "./azure-pipelines.yml"
@@ -356,6 +517,20 @@ func resourceBuildDefinitionCreate(d *schema.ResourceData, meta interface{}) err
 	repoType := d.Get("repository.0.type").(string)
 	checkoutSubmodules := d.Get("repository.0.checkout_submodules").(bool)
 
+	process := map[string]interface{}{
+		"type": &processType,
+	}
+
+	if target != nil {
+		process["target"] = target
+	}
+
+	if processType == 2 {
+		process["yamlFileName"] = &yamlFileName
+	} else {
+		process["phases"] = &phases
+	}
+
 	newBuildDefinition := build.BuildDefinition{
 		Name: &name,
 		Project: &core.TeamProjectReference{
@@ -373,10 +548,7 @@ func resourceBuildDefinitionCreate(d *schema.ResourceData, meta interface{}) err
 			CheckoutSubmodules: &checkoutSubmodules,
 			Properties:         &properties,
 		},
-		Process: map[string]interface{}{
-			"type":         &processType,
-			"yamlFileName": &yamlFileName,
-		},
+		Process: &process,
 	}
 
 	if v, ok := d.GetOk("build_variable"); ok {
@@ -440,9 +612,23 @@ func resourceBuildDefinitionRead(d *schema.ResourceData, meta interface{}) error
 	//
 	d.Set("revision", int(*definition.Revision))
 	d.Set("name", *definition.Name)
+	process := definition.Process.(map[string]interface{})
 
-	var finalList []interface{}
-	buildVariables := *definition.Variables
+	d.Set("process.0.type", process["type"])
+	if process["target"] != nil && process["target"].(map[string]interface{})["agentSpecification"] != nil {
+		jog.Println("Hello")
+		d.Set("process.0.target", []interface{}{
+			map[string]interface{}{
+				"agent_specification": process["target"].(map[string]interface{})["agentSpecification"].(map[string]interface{})["identifier"],
+			},
+		})
+	}
+
+	finalList := make([]interface{}, 0)
+	buildVariables := make(map[string]build.BuildDefinitionVariable)
+	if definition.Variables != nil {
+		buildVariables = *definition.Variables
+	}
 
 	oldBuildVariables := d.Get("build_variable").(*schema.Set).List()
 
@@ -520,10 +706,92 @@ func resourceBuildDefinitionUpdate(d *schema.ResourceData, meta interface{}) err
 	var processType int32
 	var yamlFileName string
 
+	var target map[string]interface{}
+	var phases []map[string]interface{}
+
 	if v, ok := d.GetOk("process"); ok {
 		process := v.([]interface{})[0].(map[string]interface{})
 		processType = int32(process["type"].(int))
-		yamlFileName = process["yaml_file_name"].(string)
+
+		if processType == 1 {
+			agentSpecification := process["target.0"].(map[string]string)["agent_specification"]
+
+			target["agentSpecification"] = map[string]interface{}{
+				"identifier": agentSpecification,
+			}
+
+			phases = make([]map[string]interface{}, 0)
+
+			for _, v := range process["phase"].([]interface{}) {
+				v := v.(map[string]interface{})
+
+				phase := map[string]interface{}{
+					"condition":             v["condition"],
+					"jobAuthorizationScope": v["job_authorization_scope"],
+				}
+
+				if len(v["target"].([]interface{})) != 0 {
+					target := v["target"].([]interface{})[0].(map[string]interface{})
+					phase["target"] = map[string]interface{}{
+						"allowScriptsAuthAccessOption": target["allow_scripts_auth_access_option"],
+						"type":                         target["type"],
+						"demands":                      target["demands"],
+					}
+
+					agentSpecification := process["target"].([]interface{})[0].(map[string]string)["agent_specification"]
+					queue := process["target"].([]interface{})[0].(map[string]int)["queue"]
+
+					if agentSpecification != "" {
+						phase["target"].(map[string]interface{})["agentSpecification"] = map[string]interface{}{
+							"identifier": agentSpecification,
+						}
+					}
+
+					if queue != 0 {
+						phase["target"].(map[string]interface{})["agentSpecification"] = map[string]interface{}{
+							"id": queue,
+						}
+					}
+				}
+
+				var finalTasks []map[string]interface{}
+
+				tasks := v["step"].([]interface{})
+				for _, task := range tasks {
+					task := task.(map[string]interface{})
+					alwaysRun := task["always_run"].(bool)
+					condition := task["condition"].(string)
+					enabled := task["enabled"].(bool)
+					inputs := convertInterfaceToStringMap(task["inputs"].(map[string]interface{}))
+					taskName := task["name"].(string)
+					taskID, _ := uuid.Parse(task["task_id"].(string))
+					version := task["version"].(string)
+					continueOnError := task["continue_on_error"].(bool)
+					definitionType := task["definition_type"].(string)
+
+					finalTasks = append(finalTasks, map[string]interface{}{
+						"alwaysRun":   &alwaysRun,
+						"condition":   &condition,
+						"enabled":     &enabled,
+						"inputs":      &inputs,
+						"displayName": &taskName,
+						"task": map[string]interface{}{
+							"id":             taskID,
+							"definitionType": definitionType,
+							"versionSpec":    version,
+						},
+						"continueOnError": &continueOnError,
+					})
+				}
+
+				phase["steps"] = finalTasks
+
+				phases = append(phases, phase)
+			}
+
+		} else {
+			yamlFileName = process["yaml_file_name"].(string)
+		}
 	} else {
 		processType = 2
 		yamlFileName = "./azure-pipelines.yml"
@@ -549,6 +817,19 @@ func resourceBuildDefinitionUpdate(d *schema.ResourceData, meta interface{}) err
 	repoType := d.Get("repository.0.type").(string)
 	checkoutSubmodules := d.Get("repository.0.checkout_submodules").(bool)
 
+	process := map[string]interface{}{
+		"type":   &processType,
+		"phases": &phases,
+	}
+
+	if target != nil {
+		process["target"] = target
+	}
+
+	if processType == 2 {
+		process["yamlFileName"] = &yamlFileName
+	}
+
 	newBuildDefinition := build.BuildDefinition{
 		Id:       &defID,
 		Revision: &revision,
@@ -568,10 +849,7 @@ func resourceBuildDefinitionUpdate(d *schema.ResourceData, meta interface{}) err
 			CheckoutSubmodules: &checkoutSubmodules,
 			Properties:         &properties,
 		},
-		Process: map[string]interface{}{
-			"type":         &processType,
-			"yamlFileName": &yamlFileName,
-		},
+		Process: &process,
 	}
 
 	if v, ok := d.GetOk("build_variable"); ok {

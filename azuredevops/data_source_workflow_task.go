@@ -36,12 +36,14 @@ func dataSourceWorkflowTaskRead(d *schema.ResourceData, meta interface{}) error 
 
 	wait := d.Get("wait").(int)
 
-	time.Sleep(time.Duration(wait) * time.Second)
-
 	tasks, err := getAllTasks(config)
 
 	if err != nil {
-		return err
+		time.Sleep(time.Duration(wait) * time.Second)
+		tasks, err = getAllTasks(config)
+		if err != nil {
+			return err
+		}
 	}
 
 	id := getTaskID(d.Get("name").(string), (*tasks))
