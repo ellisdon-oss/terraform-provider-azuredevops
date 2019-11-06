@@ -31,6 +31,8 @@ func Provider() terraform.ResourceProvider {
 			"azuredevops_build_definition":    resourceBuildDefinition(),
 			"azuredevops_release_definition":  resourceReleaseDefinition(),
 			"azuredevops_release_environment": resourceReleaseEnvironment(),
+			"azuredevops_release_task":        resourceReleaseTask(),
+			"azuredevops_release_tasks":       resourceReleaseTasks(),
 			"azuredevops_service_endpoint":    resourceServiceEndpoint(),
 			"azuredevops_service_hook":        resourceServiceHook(),
 			"azuredevops_variable_group":      resourceVariableGroup(),

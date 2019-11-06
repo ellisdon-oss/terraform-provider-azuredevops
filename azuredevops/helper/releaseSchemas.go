@@ -162,6 +162,63 @@ func deployPhaseSchema() *schema.Schema {
 	}
 }
 
+func WorkflowTaskSingleSchema() *schema.Schema {
+	return &schema.Schema{
+		Type:     schema.TypeList,
+		Required: true,
+		MaxItems: 1,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"name": &schema.Schema{
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"definition_type": &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
+					Default:  "task",
+				},
+				"version": &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
+					Default:  "0.*",
+				},
+				"task_id": &schema.Schema{
+					Type:     schema.TypeString,
+					Required: true,
+				},
+				"enabled": &schema.Schema{
+					Type:     schema.TypeBool,
+					Optional: true,
+					Default:  true,
+				},
+				"always_run": &schema.Schema{
+					Type:     schema.TypeBool,
+					Optional: true,
+					Default:  false,
+				},
+				"continue_on_error": &schema.Schema{
+					Type:     schema.TypeBool,
+					Optional: true,
+					Default:  false,
+				},
+				"condition": &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
+					Default:  "succeeded()",
+				},
+				"inputs": &schema.Schema{
+					Type:     schema.TypeMap,
+					Required: true,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+				},
+			},
+		},
+	}
+}
+
 func WorkflowTaskSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,

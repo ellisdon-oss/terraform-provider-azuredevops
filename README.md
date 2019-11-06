@@ -36,8 +36,9 @@ Placeholder
 - Manage the lifecycle of Service hook of any type
 - Manage the lifecycle of Release Pipeline
 - Manage the partial section of Release Pipeline
-- Manage the lifecycle of Build Pipeline
+- Manage the lifecycle of Build Pipeline for both Yaml-based and direct build tasks
 - Manage the lifecycle of Project
+- Inject Single Tasks, or Group of Tasks into Release Pipeline
 - All Resources support import
 - Full Documentation
 

@@ -7,7 +7,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/build"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/core"
-	"log"
 
 	"strconv"
 	"strings"
@@ -616,7 +615,6 @@ func resourceBuildDefinitionRead(d *schema.ResourceData, meta interface{}) error
 
 	d.Set("process.0.type", process["type"])
 	if process["target"] != nil && process["target"].(map[string]interface{})["agentSpecification"] != nil {
-		jog.Println("Hello")
 		d.Set("process.0.target", []interface{}{
 			map[string]interface{}{
 				"agent_specification": process["target"].(map[string]interface{})["agentSpecification"].(map[string]interface{})["identifier"],
