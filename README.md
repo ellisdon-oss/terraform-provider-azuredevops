@@ -21,10 +21,6 @@ Table of Contents
       * [Todo-List](#todo-list)
       * [License](#license)
 
-## About EllisDon-OSS
-
-Placeholder
-
 ## Features
 <details>
 <summary>Features List</summary>
