@@ -56,7 +56,8 @@ provider "azuredevops" {
 | azuredevops_release_definition | Manage Full Release Definition | [Link](./r/release_definition.md) | [Link](../examples/r/release_definition/README.md) |
 | azuredevops_release_environment | Manage Partial Release Definition | [Link](./r/release_environment.md) | [Link](../examples/r/release_environment/README.md) |
 | azuredevops_release_task | Manage Single Task in Release Pipeline | [Link](./r/release_task.md) | [Link](../examples/r/release_task/README.md) |
-| azuredevops_release_tasks | Manage Group of Tasks in Release Pipelinee | [Link](./r/release_tasks.md) | [Link](../examples/r/release_tasks/README.md) |
+| azuredevops_release_tasks | Manage Group of Tasks in Release Pipeline | [Link](./r/release_tasks.md) | [Link](../examples/r/release_tasks/README.md) |
+| azuredevops_release_variables | Manage Variables in Release Pipeline | [Link](./r/release_variables.md) | [Link](../examples/r/release_variables/README.md) |
 | azuredevops_service_endpoint | Manage Service Endpoint(Github, Kubernetes, etc) | [Link](./r/service_endpoint.md) | [Link](../examples/r/service_endpoint/README.md) |
 | azuredevops_service_hook | Manage Service Hook(Slack, etc) | [Link](./r/service_hook.md) | [Link](../examples/r/service_hook/README.md) |
 | azuredevops_task_group | Manage Task Group | [Link](./r/task_group.md) | [Link](../examples/r/task_group/README.md) |
