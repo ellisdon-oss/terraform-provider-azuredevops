@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ellisdon/terraform-provider-azuredevops/azuredevops"
+	"github.com/ellisdon-oss/terraform-provider-azuredevops/azuredevops"
 	"github.com/hashicorp/terraform-plugin-sdk/plugin"
 )
 

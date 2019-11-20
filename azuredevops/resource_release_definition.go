@@ -3,7 +3,7 @@ package azuredevops
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ellisdon/terraform-provider-azuredevops/azuredevops/helper"
+	"github.com/ellisdon-oss/terraform-provider-azuredevops/azuredevops/helper"
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/release"

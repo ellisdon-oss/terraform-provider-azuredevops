@@ -10,7 +10,7 @@
     };
   }
   {
-    goPackagePath = "github.com/ellisdon/azuredevops-go";
+    goPackagePath = "github.com/ellisdon-oss/azuredevops-go";
     fetch = {
       type = "git";
       url = "git@github.com:EllisDon-Aegean/azuredevops-go.git";
