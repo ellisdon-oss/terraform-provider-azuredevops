@@ -351,6 +351,7 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 				"always_run":        mapL["alwaysRun"],
 				"continue_on_error": mapL["continueOnError"],
 				"condition":         mapL["condition"],
+				"environment":       mapL["environment"],
 				"inputs":            inputs,
 			})
 		}

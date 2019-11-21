@@ -207,6 +207,13 @@ func WorkflowTaskSingleSchema() *schema.Schema {
 					Optional: true,
 					Default:  "succeeded()",
 				},
+				"environment": &schema.Schema{
+					Type:     schema.TypeMap,
+					Optional: true,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+				},
 				"inputs": &schema.Schema{
 					Type:     schema.TypeMap,
 					Required: true,
@@ -262,6 +269,13 @@ func WorkflowTaskSchema() *schema.Schema {
 					Type:     schema.TypeString,
 					Optional: true,
 					Default:  "succeeded()",
+				},
+				"environment": &schema.Schema{
+					Type:     schema.TypeMap,
+					Optional: true,
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
 				},
 				"inputs": &schema.Schema{
 					Type:     schema.TypeMap,

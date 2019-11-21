@@ -388,6 +388,7 @@ func extractEnvironments(environments []interface{}) []release.ReleaseDefinition
 				condition := task["condition"].(string)
 				enabled := task["enabled"].(bool)
 				inputs := convertInterfaceToStringMap(task["inputs"].(map[string]interface{}))
+				environment := convertInterfaceToStringMap(task["environment"].(map[string]interface{}))
 				taskName := task["name"].(string)
 				taskID, _ := uuid.Parse(task["task_id"].(string))
 				version := task["version"].(string)
@@ -399,6 +400,7 @@ func extractEnvironments(environments []interface{}) []release.ReleaseDefinition
 					Condition:       &condition,
 					Enabled:         &enabled,
 					Inputs:          &inputs,
+					Environment:     &environment,
 					Name:            &taskName,
 					Version:         &version,
 					TaskId:          &taskID,
