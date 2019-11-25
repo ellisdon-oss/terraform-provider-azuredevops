@@ -8,18 +8,18 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find release definition(release pipeline) on AzureDevOps
+A data source to find the release definition (release pipeline) on Azure DevOps
 
 ## Example
 
 ```terraform
 data "azuredevops_release_definition" "default" {
   project_id = "<project id>"
-  name = "<Release Pipeline Name>"
+  name = "<release pipeline name>"
 }
 ```
 
@@ -29,15 +29,15 @@ data "azuredevops_release_definition" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | The Project ID/Name |
-| name | string | Required | The Release Definition Name |
+| `project_id` | string | Required | The Project ID/Name |
+| `name` | string | Required | The release defintion name |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Release Definition ID | 
+| `id` | The release definition ID | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Release Pipeline](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)
+- [Azure DevOps Release Pipeline](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)

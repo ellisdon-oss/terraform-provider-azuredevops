@@ -12,11 +12,11 @@ Table of Contents
           * [Version](#version)
           * [Task](#task)
           * [Input](#input)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Resource to manage task group
+A resource to manage task group
 
 ## Example
 
@@ -46,20 +46,20 @@ resource "azuredevops_task_group" "helm" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | Project ID |
-| name | string | Required | Task Group Name |
-| runs_on | list of string | Optional | Runs On Parameter(default to "Agent, DeploymentGroup") |
-| category | string | Optional | Task Group Category(default to Deploy) |
-| version | [version](#version) | Required | Task Group Version |
-| task | [task](#task) | Required | Tasks |
-| input | collection of [input](#input) | Optional | Input Parameter |
+| `project_id` | string | Required | Project ID |
+| `name` | string | Required | Task group name |
+| `runs_on` | list of string | Optional | "Runs On" parameter(default: `"Agent, DeploymentGroup"`) |
+| `category` | string | Optional | Task group category(default to Deploy) |
+| `version` | [version](#version) | Required | Task group version |
+| `task` | [task](#task) | Required | Tasks |
+| `input` | collection of [input](#input) | Optional | Input parameter |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| group_id | Task Group ID | 
-| revision | Task Group Revision | 
+| `group_id` | Task group ID | 
+| `revision` | Task group revision | 
 
 ## Extra
 
@@ -67,37 +67,37 @@ resource "azuredevops_task_group" "helm" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| is_test | bool | Optional | Mark task group as test version |
-| major | integer | Required | Major version for task group |
-| minor | integer | Required | Minor version for task group |
-| patch | integer | Required | Patch version for task group |
+| `is_test` | bool | Optional | Mark task group as test version |
+| `major` | integer | Required | Major version for task group |
+| `minor` | integer | Required | Minor version for task group |
+| `patch` | integer | Required | Patch version for task group |
 
 ### Task
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Name of the task |
-| definition_type | string | Optional | Definition Type(default to `task`), there is also `metaTask` for adding a task group into a task group |
-| version | string | Optional | Version of the task |
-| task_id | string | Required | UUID of the task(recommended using [workflow_task](../d/workflow_task.md) to get the id)  |
-| enabled | boolean | Optional | Enable/Disable the task |
-| always_run | boolean | Optional | Enable/Disable Always Run option in the task |
-| continue_on_error | boolean | Optional | Enable/Disable continue on error option in the task |
-| condition | string | Optional | [Condition](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/expressions?view=azure-devops#job-status-functions) of the task |
-| environment | map | Optional | Key/Value Map of Environment variables for task |
-| inputs | map | Required | Key/Value Map of settings for task |
+| `name` | string | Required | Name of the task |
+| `definition_type` | string | Optional | Definition type (default: `task`), there is also `metaTask` for adding a task group into a task group |
+| `version` | string | Optional | Version of the task |
+| `task_id` | string | Required | UUID of the task (recommend using [workflow_task](../d/workflow_task.md) to get the ID)  |
+| `enabled` | boolean | Optional | Enable/disable the task |
+| `always_run` | boolean | Optional | Enable/disable "Always Run" option in the task |
+| `continue_on_error` | boolean | Optional | Enable/disable continue on error option in the task |
+| `condition` | string | Optional | [Condition](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/expressions?view=azure-devops#job-status-functions) of the task |
+| `environment` | map | Optional | Key/value map of environment variables for task |
+| `inputs` | map | Required | Key/value map of settings for task |
 
 ### Input
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Name of the parameter |
-| label | string | Optional | Label of the parameter(empty for not displaying any label |
-| default | string | Optional | Default value of the parameter |
-| required | boolean | Optional | Is the parameter a required value |
-| help_text | string | Optional | Parameter description |
-| type | string | Required | Parameter type |
+| `name` | string | Required | Name of the parameter |
+| `label` | string | Optional | Label of the parameter (leave empty to not display a label) |
+| `default` | string | Optional | Default value of the parameter |
+| `required` | boolean | Optional | Is the parameter a required value |
+| `help_text` | string | Optional | Parameter description |
+| `type` | string | Required | Parameter type |
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Task Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/task-groups?view=azure-devops)
+- [Azure DevOps Task Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/task-groups?view=azure-devops)

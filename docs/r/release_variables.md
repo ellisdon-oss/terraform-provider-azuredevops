@@ -10,11 +10,11 @@ Table of Contents
       * [Attributes](#attributes)
       * [Extra](#extra)
           * [Variable](#variable)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Resource to manage release variables in release pipelines
+A resource to manage release variables in release pipelines
 
 ## Example
 
@@ -44,15 +44,15 @@ resource "azuredevops_release_variables" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | Project ID |
-| definition_id | integer | Required | Definition ID |
-| variable | [variable](#variable) | Required | Variables |
+| `project_id` | string | Required | Project ID |
+| `definition_id` | integer | Required | Definition ID |
+| `variable` | [variable](#variable) | Required | Variables |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Release Variables UUID | 
+| `id` | Release Variables UUID | 
 
 ## Extra
 
@@ -60,12 +60,12 @@ resource "azuredevops_release_variables" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Variable name |
-| value | string | Required | Variable Value |
-| stage_name | string | Optional | Specify Stage to add the variable to |
-| is_secret | boolean | Optional | Mark variable as secret or not |
+| `name` | string | Required | Variable name |
+| `value` | string | Required | Variable Value |
+| `stage_name` | string | Optional | Specify stage to add the variable to |
+| `is_secret` | boolean | Optional | Mark variable as secret or not |
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Release Variables](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/variables?view=azure-devops&tabs=batch)
+- [Azure DevOps Release Variables](https://docs.microsoft.com/en-us/azure/devops/pipelines/release/variables?view=azure-devops&tabs=batch)
 

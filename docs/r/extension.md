@@ -8,11 +8,11 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Resource to manage extension
+A resource to manage an extension
 
 ## Example
 
@@ -29,17 +29,17 @@ resource "azuredevops_extension" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| publisher | string | Required | Publisher Name |
-| name | string | Required | Extension Name |
-| version | string | Optional | Version of Extension to install(no effect on Hosted AzureDevOps since it auto update to latest version) |
-| state | string | Optional | "none"(default) for enable, and "disabled" to disable the extension |
+| `publisher` | string | Required | Publisher name |
+| `name` | string | Required | Extension name |
+| `version` | string | Optional | Version of extension to install (This has no effect on hosted Azure Devops since it is automatically updated to the latest version) | 
+| `state` | string | Optional | `"none"` (default) to enable, and `"disabled"` to disable the extension |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Extension ID | 
+| `id` | Extension ID | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Extension](https://docs.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops)
+- [Azure DevOps Extension](https://docs.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops)

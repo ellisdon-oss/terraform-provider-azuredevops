@@ -8,21 +8,21 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find source repository(git repo) on AzureDevOps
+A data source to find source repository (git repository) on AzureDevOps
 
 ## Example
 
 ```terraform
 data "azuredevops_source_repository" "default" {
-  project_id = <project id>
+  project_id = "<project id>"
 	type = "github"
-  org_name = "<Github Organization Name>"
-  repo_name = "<Github Repo Name>"
-  service_endpoint_id = "<Github Service Endpoint ID>"
+  org_name = "<GitHub organization name>"
+  repo_name = "<GitHub repo name>"
+  service_endpoint_id = "<GitHub service endpoint id>"
 }
 ```
 
@@ -32,22 +32,22 @@ data "azuredevops_source_repository" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | The Project ID/Name |
-| service_endpoint_id | string | Required | The Service Endpoint ID needed for grabbing source repository |
-| type | string | Required | The type of source repository(github, etc) |
-| org_name | string | Required | The organization name for the source repository |
-| repo_name | string | Required | The repo name for the source repository |
+| `project_id` | string | Required | The project ID/name |
+| `service_endpoint_id` | string | Required | The service endpoint ID needed for grabbing the source repository |
+| `type` | string | Required | The type of source repository (github, etc.) |
+| `org_name` | string | Required | The organization name for the source repository |
+| `repo_name` | string | Required | The name for the source repository |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Source Repository ID | 
-| url | Url for the source repository | 
-| default_branch | Default branch for the source repository | 
-| properties | A Map of the properties of the repo | 
+| `id` | The source repository ID | 
+| `url` | The URL for the source repository | 
+| `default_branch` | The default branch for the source repository | 
+| `properties` | A map of the properties of the repository | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Source Repository](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/?view=azure-devops)
+- [Azure DevOps Source Repository](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/?view=azure-devops)
 

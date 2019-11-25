@@ -1,4 +1,4 @@
-# Servie Endpoint Examples
+# Service Endpoint Examples
 
 | []() |  |  |  |  |
 |---|---|---|---|---|

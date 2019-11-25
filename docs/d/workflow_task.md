@@ -8,11 +8,11 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find task, useful for finding id for task to be use in pipelines
+A data source to find a task, useful for finding the ID for a task to be used in pipelines
 
 ## Example
 
@@ -28,17 +28,17 @@ data "azuredevops_workflow_task" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Task Name |
-| extension_id | string | Optional | Extension ID(only for reference purpose) |
-| wait | integer | Optional | Wait time for reading, useful when reading extension tasks |
+| `name` | string | Required | Task Name |
+| `extension_id` | string | Optional | Extension ID(only for reference purposes) |
+| `wait` | integer | Optional | Wait time for reading, useful when reading extension tasks |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Task ID | 
+| `id` | Task ID | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Task](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/tasks?view=azure-devops&tabs=yaml)
+- [Azure DevOps Task](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/tasks?view=azure-devops&tabs=yaml)
 

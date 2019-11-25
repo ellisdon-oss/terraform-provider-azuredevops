@@ -11,13 +11,13 @@ Table of Contents
       * [Extra](#extra)
          * [Variable Group](#variable-group)
          * [Variable](#variable)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to read all variable groups from a AzureDevOps project
+A data source to read all variable groups from an Azure DevOps project
 
-Note: if you want to read single the variable groups from AzureDevOps, then check [variable_group](./variable_group.md)
+Note: if you want to read single variable groups from Azure DevOps, then check [variable_group](./variable_group.md)
 
 ## Example
 
@@ -33,14 +33,14 @@ data "azuredevops_variable_groups" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | The Project ID/Name |
+| `project_id` | string | Required | The Project ID/Name |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | User ID |
-| groups | Array of [Variable Group](#variable-group) |
+| `id` | User ID |
+| `groups` | An array of [variable groups](#variable-group) |
 
 ## Extra
 
@@ -48,18 +48,18 @@ data "azuredevops_variable_groups" "default" {
 
 | Name | Type | Description |
 |------|-------------|-------|
-| group_id | integer | Variable Group ID |
-| name | string | Variable Group Name |
-| variables | array of [variable](#variable) | The variables in the group |
+| `group_id` | integer | Variable Group ID |
+| `name` | string | Variable Group Name |
+| `variables` | [variable[]](#variable) | The variables in the group |
 
 ### Variable
 
 | Name | Type | Description |
 |------|-------------|-------|
-| name | string | Variable name |
-| value | string | Variable Value |
-| is_secret | boolean | Status of Value being secret, bool |
+| `name` | string | Variable name |
+| `value` | string | Variable value |
+| `is_secret` | boolean | Mark variable as secret or not |
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Variable Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml)
+- [Azure DevOps Variable Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml)

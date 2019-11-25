@@ -8,17 +8,17 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find AzureDevOps group (useful when doing approval step in release pipeline)
+A data source to find the Azure DevOps group (useful when doing an approval step in a release pipeline)
 
 ## Example
 
 ```terraform
 data "azuredevops_group" "default" {
-  display_name = "AzureDevops Group"
+  display_name = "<group display name>"
 }
 ```
 
@@ -28,14 +28,14 @@ data "azuredevops_group" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| display_name | string | Required | The name on AzureDevOps UI for the group |
+| `display_name` | string | Required | The name in the Azure DevOps UI for the group |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Group ID | 
+| `id` | Group ID | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Group](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page)
+- [Azure DevOps Group](https://docs.microsoft.com/en-us/azure/devops/organizations/security/permissions?view=azure-devops&tabs=preview-page)

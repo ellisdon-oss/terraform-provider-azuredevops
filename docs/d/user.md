@@ -8,17 +8,17 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find AzureDevOps user (useful when doing approval step in release pipeline)
+A data source to find an Azure DevOps user (useful when doing an approval step in a release pipeline)
 
 ## Example
 
 ```terraform
 data "azuredevops_user" "default" {
-  name = "AzureDevops User"
+  name = "<azure devops user>"
 }
 ```
 
@@ -28,16 +28,16 @@ data "azuredevops_user" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | The name on AzureDevOps UI for the user |
-| is_email | boolean | Optional | Switch search between Display Name and Email |
+| `name` | string | Required | The name in the Azure DevOps UI for the user |
+| `is_email` | boolean | Optional | Whether or not to search by email or user name |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | User ID | 
+| `id` | User ID | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps User](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/manage-users-table-view?view=azure-devops&tabs=browser)
+- [Azure DevOps User](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/manage-users-table-view?view=azure-devops&tabs=browser)
 
