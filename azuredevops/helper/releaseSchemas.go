@@ -70,6 +70,10 @@ func approvalsSchema() *schema.Schema {
 					Type:     schema.TypeString,
 					Optional: true,
 				},
+				"rank": &schema.Schema{
+					Type:     schema.TypeInt,
+					Optional: true,
+				},
 				"is_automated": &schema.Schema{
 					Type:     schema.TypeBool,
 					Optional: true,
@@ -92,6 +96,11 @@ func optionsSchema() *schema.Schema {
 		MaxItems: 1,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
+				"required_approver_count": &schema.Schema{
+					Type:     schema.TypeInt,
+					Optional: true,
+					Default:  0,
+				},
 				"execution_order": &schema.Schema{
 					Type:     schema.TypeString,
 					Optional: true,

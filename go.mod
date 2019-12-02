@@ -15,4 +15,4 @@ require (
 
 replace github.com/microsoft/azure-devops-go-api/azuredevops => github.com/ellisdon-oss/azure-devops-go-api/azuredevops v0.0.0-20191120143450-7c0fc65db71c
 
-go 1.13
+go 1.11

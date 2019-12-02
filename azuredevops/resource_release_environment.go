@@ -382,6 +382,7 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 		}
 		approvals = append(approvals, map[string]interface{}{
 			"approver_id":        approverID,
+			"rank":               *v.Rank,
 			"is_automated":       *v.IsAutomated,
 			"is_notification_on": *v.IsNotificationOn,
 		})
@@ -394,6 +395,8 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 			"release_creator_can_be_approver": *env.PreDeployApprovals.ApprovalOptions.ReleaseCreatorCanBeApprover,
 		},
 	}
+
+  options[0].(map[string]interface{})["required_approver_count"] = env.PreDeployApprovals.ApprovalOptions.RequiredApproverCount
 
 	preDeployApprovals = append(preDeployApprovals, map[string]interface{}{
 		"options":   options,

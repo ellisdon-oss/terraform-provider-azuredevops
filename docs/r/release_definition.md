@@ -159,12 +159,14 @@ resource "azuredevops_release_definition" "default" {
 | execution_order | string | Optional | the order of the executions(default to `beforeGates`) |
 | timeout_in_minutes | integer | Required | set how long for timeout(in minutes) for approval |
 | release_creator_can_be_approver | boolean | Optional | toggle for allowing release creator to be approver |
+| required_approver_count | int | Optional | Number of approver required |
 
 ### Approvals 
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
 | approver_id | string | Optional | UUID of the approver(can use [user](../d/user.md) or [group](../d/group.md) to get the id) |
+| rank | int | Optional | Default to 1, is use for doing sequence approval |
 | is_automated | boolean | Optional | toggle for approval |
 | is_notification_on | boolean | Optional | enable notification |
 
