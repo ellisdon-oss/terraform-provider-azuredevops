@@ -429,7 +429,7 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 			}
 
 			if isSecret {
-				if *oldEnv.Name != "" {
+				if &oldEnv != nil && *oldEnv.Name != "" && oldVariables[k].Value != nil {
 					value = *oldVariables[k].Value
 				}
 			} else {
