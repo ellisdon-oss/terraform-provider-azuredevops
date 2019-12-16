@@ -66,9 +66,10 @@ resource "azuredevops_release_definition" "default" {
     }
 
     deploy_phase {
-      deployment_input = {
+      deployment_input = jsonencode({
         queueId = "<queue id>"
-      }
+      })
+
 
       rank       = 1
       phase_type = "agentBasedDeployment"
@@ -185,7 +186,7 @@ resource "azuredevops_release_definition" "default" {
 | workflow_task | [workflow_task](#workflow-task) | Required | Task definition |
 | name | string | Required | Name of the Phase |
 | rank | integer | Required | Rank(order) of the Phase |
-| deployment_input | map | Required | Input for the deployment(like setting agent queue id) |
+| deployment_input | json string | Required | Input for the deployment(like setting agent queue id)(json string, use jsonencode() function) |
 | phase_type | string | Required | Phase Type(like if is agent based) |
 
 ### Workflow Task
