@@ -10,11 +10,11 @@ Table of Contents
       * [Attributes](#attributes)
       * [Extra](#extra)
           * [Authorization](#authorization)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Resource to manage service endpoint(github, kubernetes, etc)
+A resource to manage service endpoints (GitHub, Kubernetes, etc)
 
 ## Example
 
@@ -43,20 +43,20 @@ resource "azuredevops_service_endpoint" "github" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Service Endpoint Name |
-| type | string | Required | Service Endpoint Type(github, kubernetes, etc) |
-| project_id | string | Required | Project ID(which project the service endpoint will be create in) |
-| allow_all_pipelines | boolean | Optional | To allow all pipelines use this service endpoint right away |
-| data | map | Optional | Data for the service endpoint(different for each service endpoint type) |
-| owner | string | Required | Owner of the Service Endpoint Type(not the user, but the type owner) |
-| url | string | Required | URL for the Service Endpoint |
-| authorization | [authorization](#authorization) | Required | Authorization data for the Service Endpoint |
+| `name` | string | Required | Service endpoint name |
+| `type` | string | Required | Service endpoint type (github, kubernetes, etc) |
+| `project_id` | string | Required | Project ID (which project the service endpoint will be created in) |
+| `allow_all_pipelines` | boolean | Optional | To allow all pipelines use this service endpoint right away |
+| `data` | map | Optional | Data for the service endpoint (different for each service endpoint type) |
+| `owner` | string | Required | Owner of the service endpoint type (not the user, but the owner of the type) |
+| `url` | string | Required | URL for the service endpoint |
+| `authorization` | [authorization](#authorization) | Required | Authorization data for the service endpoint |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Service Endpoint ID | 
+| `id` | Service endpoint ID | 
 
 ## Extra
 
@@ -64,9 +64,9 @@ resource "azuredevops_service_endpoint" "github" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| scheme | string | Required | scheme type for the authorization |
-| parameters | map | Required | Data for the authorization scheme |
+| `scheme` | string | Required | Authorization scheme |
+| `parameters` | map | Required | Data for the authorization scheme |
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)
+- [Azure DevOps Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)

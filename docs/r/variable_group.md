@@ -10,11 +10,11 @@ Table of Contents
       * [Attributes](#attributes)
       * [Extra](#extra)
           * [Variable](#variable)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Resource to manage variable group
+A resource to manage a variable group
 
 ## Example
 
@@ -43,15 +43,15 @@ resource "azuredevops_variable_group" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | Project ID |
-| name | string | Required | Variable Group Name |
-| variable | [variable](#variable) | Required | Variables |
+| `project_id` | string | Required | Project ID |
+| `name` | string | Required | Variable group name |
+| `variable` | [variable](#variable) | Required | Variables |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Variable Group ID | 
+| `id` | Variable Group ID | 
 
 ## Extra
 
@@ -59,10 +59,10 @@ resource "azuredevops_variable_group" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Variable name |
-| value | string | Required | Variable Value |
-| is_secret | boolean | Optional | Mark variable as secret or not |
+| `name` | string | Required | Variable name |
+| `value` | string | Required | Variable value |
+| `is_secret` | boolean | Optional | Mark variable as secret or not |
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Variable Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml)
+- [Azure DevOps Variable Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups?view=azure-devops&tabs=yaml)

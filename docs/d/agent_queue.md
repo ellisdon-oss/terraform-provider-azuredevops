@@ -8,18 +8,18 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find agent queue ID due to agent queue being different for each project
+A data source to find the agent queue ID when the agent queue is different for each project
 
 ## Example
 
 ```terraform
 data "azuredevops_agent_queue" "default" {
   project_id = "<project id>"
-  queue_name = "VS2017 Hosted"
+  queue_name = "<queue name>"
 }
 ```
 
@@ -29,16 +29,16 @@ data "azuredevops_agent_queue" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | The Project ID/Name |
-| queue_name | string | Required | The Queue Name |
+| `project_id` | string | Required | The project name/ID |
+| `queue_name` | string | Required | The agent queue name |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Queue ID | 
+| `id` | The agent queue ID | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops)
+- [Azure DevOps Agent](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops)
 

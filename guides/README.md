@@ -1,3 +1,3 @@
 # Guides
 
-## [Get Access Token](./get-access-token)
+## [Getting an Access Token](./get-access-token)

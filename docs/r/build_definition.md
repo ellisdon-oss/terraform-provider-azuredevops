@@ -18,11 +18,11 @@ Table of Contents
           * [Repository](#repository)
           * [Build Variable](#build-variable)
           * [Forks](#forks)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Resource to manage build definition in AzureDevOps
+A resource to manage a build definition in Azure DevOps
 
 ## Example
 
@@ -82,21 +82,21 @@ resource "azuredevops_build_definition" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Build Definition Name |
-| project_id | string | Required | Project ID |
-| demand | [demand](#demand) | Optional | Demand for agent pool |
-| process | [process](#process) | Optional | Process settings for the definition |
-| triggers | [triggers](#triggers) | Optional | Trigger configuration for the definition |
-| queue | [queue](#queue) | Optional | Queue setting  |
-| repository | [repository](#repository) | Required | Repository setting  |
-| build_variable | [build_variable](#build-variable) | Optional | Build Variable for the definition |
+| `name` | string | Required | Build definition nName |
+| `project_id` | string | Required | Project ID |
+| `demand` | [demand](#demand) | Optional | Demand for agent pool |
+| `process` | [process](#process) | Optional | Process settings for the definition |
+| `triggers` | [triggers](#triggers) | Optional | Trigger configuration for the definition |
+| `queue` | [queue](#queue) | Optional | Queue setting  |
+| `repository` | [repository](#repository) | Required | Repository setting  |
+| `build_variable` | [build_variable](#build-variable) | Optional | Build variable for the definition |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Build Definition ID | 
-| revision | Build Definition Revision | 
+| `id` | Build definition ID | 
+| `revision` | Build definition revision | 
 
 ## Extra
 
@@ -104,79 +104,79 @@ resource "azuredevops_build_definition" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Demand name |
-| value | string | Required | Demand value |
+| `name` | string | Required | Demand name |
+| `value` | string | Required | Demand value |
 
 ### Process
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| type | string | Optional | Process type |
-| yaml_file_name | string | Optional | Name for the pipeline yaml(default to `./azure-pipelines.yml`) |
+| `type` | string | Optional | Process type |
+| `yaml_file_name` | string | Optional | Name for the pipeline YAML file (default: `./azure-pipelines.yml`) |
 
 ### Triggers
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| pull_request | [pull_request](#pull-request) | Optional | Pull Request Trigger |
-| continuous_integration | [continuous_integration](#continuous-integration) | Optional | Continuous Integration Trigger |
+| `pull_request` | [pull_request](#pull-request) | Optional | Pull request trigger |
+| `continuous_integration` | [continuous_integration](#continuous-integration) | Optional | Continuous integration trigger |
 
 ### Pull Request
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| auto_cancel | boolean | Optional | Auto cancel setting |
-| is_comment_required_for_pull_request | boolean | Optional | Enable/Disable comment requirement |
-| settings_source_type | integer | Optional | 1(override from the yaml file), 2(not override from yaml file) |
-| path_filters | list of strings | Optional | Path filter for branch |
-| branch_filters | list of strings | Optional | Branch filter for branch |
-| forks | [forks](#forks) | Optional | Branch filter for branch |
+| `auto_cancel` | boolean | Optional | Auto cancel setting |
+| `is_comment_required_for_pull_request` | boolean | Optional | Enable/Disable comment requirement |
+| `settings_source_type` | integer | Optional | `1` (override from the YAML file), `2` (don't override from YAML file) |
+| `path_filters` | list of strings | Optional | Path filter for branch |
+| `branch_filters` | list of strings | Optional | Branch filter for branch |
+| `forks` | [forks](#forks) | Optional | Branch filter for branch |
 
 ### Continuous Integration
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| branch_filters | list of string | Required | Branch filters for the trigger |
-| path_filters | list of string | Optional | Path filters for the trigger |
-| batch_changes | boolean | Optional | Batch changes while a build is in progress|
-| max_concurrent_builds_per_branch | integer | Optional | Max parallel job per branch |
-| polling_interval | integer | Optional | Polling interval setting |
-| polling_job_id | string | Optional | Polling job id |
-| settings_source_type | integer | Optional | 1(override from the yaml file), 2(not override from yaml file) |
+| `branch_filters` | list of string | Required | Branch filters for the trigger |
+| `path_filters` | list of string | Optional | Path filters for the trigger |
+| `batch_changes` | boolean | Optional | Batch changes while a build is in progress|
+| `max_concurrent_builds_per_branch` | integer | Optional | Max parallel jobs per branch |
+| `polling_interval` | integer | Optional | Polling interval setting |
+| `polling_job_id` | string | Optional | Polling job id |
+| `settings_source_type` | integer | Optional | `1` (override from the YAML file), `2` (don't override from YAML file) |
 
 ### Queue
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| agent_name | string | Required | Agent for the build(defalut to `Hosted`) |
+| `agent_name` | string | Required | Agent for the build (defalut: `Hosted`) |
 
 ### Repository
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | name of the repo |
-| url | string | Required | url of the repo |
-| clean | string | Optional | enable cleaning of the repo(defualt to `"true"`) |
-| type | string | Optional | Type of the repo(default to `Github`) |
-| properties | map | Required | Repo settings(can be acquire with [source_repository](../d/source_repository.md) |
-| default_branch | string | Optional | set default branch for repo |
-| checkout_submodules | boolean | Optional | enable to checkout submodules on build |
+| `name` | string | Required | The name of the repository |
+| `url` | string | Required | The URL of the repository |
+| `clean` | string | Optional | Enable cleaning of the repository (defaullt: `"true"`) |
+| `type` | string | Optional | Type of the repo (default: `Github`) |
+| `properties` | map | Required | Repository settings (can be acquired with [source_repository](../d/source_repository.md) |
+| `default_branch` | string | Optional | Set the default branch for repository |
+| `checkout_submodules` | boolean | Optional | Enable checking out submodules on build |
 
 ### Build Variable
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Variable name |
-| value | string | Required | Variable Value |
-| is_secret | boolean | Optional | Mark variable as secret or not |
+| `name` | string | Required | Variable name |
+| `value` | string | Required | Variable Value |
+| `is_secret` | boolean | Optional | Mark variable as secret or not |
 
 ### Forks
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| allow_secrets | boolean | Optional | Allow secret vars into forked repo build |
-| enabled | boolean | Optional | Enabled forked repo to be build by this definition |
+| `allow_secrets` | boolean | Optional | Allow secret vars into forked repository build |
+| `enabled` | boolean | Optional | Enable forked repository to be built by this definition |
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Build Pipeline](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)
+- [Azure DevOps Build Pipeline](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)

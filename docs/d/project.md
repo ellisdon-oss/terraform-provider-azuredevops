@@ -8,11 +8,11 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find AzureDevops Project
+A data source to find the Azure Devops project
 
 ## Example
 
@@ -28,26 +28,26 @@ data "azuredevops_project" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | The Project ID/Name |
+| `project_id` | string | Required | The project ID/name |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Project ID | 
-| name | Project Name | 
-| abbreviation | Project name abbreviation | 
-| default_team_image_url | Avatar Image Url | 
-| description | Project Description | 
-| last_update_time | Last Updated Time for Project | 
-| revision | The Revision number of project | 
-| state | Project State(active/not active) | 
-| url | Project URL | 
-| visibility | Project visibility(private/public) | 
-| links | Project Links | 
-| default_team | Project Default Team | 
-| capabilities | Project Capabilities(git enabled/scrum/etc) | 
+| `id` | The project ID | 
+| `name` | The project name | 
+| `abbreviation` | The project name abbreviation | 
+| `default_team_image_url` | The avatar image URL | 
+| `description` | The project description | 
+| `last_update_time` | The last updated time for the project | 
+| `revision` | The revision number of project | 
+| `state` | The state of the project (active/not active) | 
+| `url` | Project URL | 
+| `visibility` | The project's visibility (private/public) | 
+| `links` | Project links | 
+| `default_team` | The default team for the project | 
+| `capabilities` | Project capabilities (git enabled/scrum/etc) | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops)
+- [Azure DevOps Project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops)

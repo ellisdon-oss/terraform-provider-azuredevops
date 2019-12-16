@@ -8,18 +8,18 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find build definition ID
+A data source to find a build definition ID
 
 ## Example
 
 ```terraform
 data "azuredevops_build_definition" "default" {
   project_id = "<project id>"
-  name = "Some Build Definition Name"
+  name = "<build definition name>"
 }
 ```
 
@@ -29,16 +29,16 @@ data "azuredevops_build_definition" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | The Project ID/Name |
-| name | string | Required | The Build Definition Name |
+| `project_id` | string | Required | The project ID/name |
+| `name` | string | Required | The build definition name |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Build Definition ID | 
+| `id` | The build definition ID | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
 - [AzureDevOps Build Pipeline](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops)
 

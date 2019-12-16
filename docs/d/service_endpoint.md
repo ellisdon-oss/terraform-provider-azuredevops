@@ -8,11 +8,11 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find service endpoint(kube, aws, azure, etc) on AzureDevOps
+A data source to find service endpoints (Kubernetes, AWS, Azure, etc.) on AzureDevOps
 
 ## Example
 
@@ -20,7 +20,7 @@ A Data source to find service endpoint(kube, aws, azure, etc) on AzureDevOps
 data "azuredevops_service_endpoint" "default" {
   project_id = "<project id>"
 	type = "kubernetes"
-  name = "<Service Endpoint Name>"
+  name = "<service endpoint name>"
 }
 ```
 
@@ -30,18 +30,18 @@ data "azuredevops_service_endpoint" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | The Project ID/Name |
-| name | string | Required | The Service Endpoint Name |
-| type | string | Required | The type of service endpoint(github, kubernetes, etc) |
+| `project_id` | string | Required | The Project ID/Name |
+| `name` | string | Required | The service endpoint name |
+| `type` | string | Required | The type of service endpoint (`github`, `kubernetes`, etc.) |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Service Endpoint ID | 
-| owner | The owner of the service endpoint | 
-| url | The url of the service endpoint | 
+| `id` | Service Endpoint ID | 
+| `owner` | The owner of the service endpoint | 
+| `url` | The URL of the service endpoint | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)
+- [Azure DevOps Service Endpoint](https://docs.microsoft.com/en-us/azure/devops/extend/develop/service-endpoints?view=azure-devops)

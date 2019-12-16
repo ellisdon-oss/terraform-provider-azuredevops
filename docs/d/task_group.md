@@ -8,18 +8,18 @@ Table of Contents
       * [Example](#example)
       * [Arguments](#arguments)
       * [Attributes](#attributes)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Data source to find task group on AzureDevOps
+A data source to a find task group on AzureDevOps
 
 ## Example
 
 ```terraform
 data "azuredevops_task_group" "default" {
   project_id = "<project id>"
-  name = "<Task Group Name>"
+  name = "<task group name>"
 }
 ```
 
@@ -29,15 +29,15 @@ data "azuredevops_task_group" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| project_id | string | Required | The Project ID/Name |
-| name | string | Required | The Task Group Name |
+|` project_id` | string | Required | The project ID/name |
+| `name` | string | Required | The task group name |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| group_id | Task Group ID | 
+| `group_id` | Task group ID | 
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Task Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/task-groups?view=azure-devops)
+- [Azure DevOps Task Group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/task-groups?view=azure-devops)

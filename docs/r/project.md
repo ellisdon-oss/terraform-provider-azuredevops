@@ -12,11 +12,11 @@ Table of Contents
           * [Capabilities](#capabilities)
           * [Version Control](#version-control)
           * [Process Template](#process-template)
-      * [AzureDevOps Reference](#azuredevops-reference)
+      * [Azure DevOps Reference](#azure-devops-reference)
 
 ## Description
 
-A Resource to manage project in AzureDevOps
+A resource to manage a project in Azure DevOps
 
 ## Example
 
@@ -44,16 +44,16 @@ resource "azuredevops_project" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| name | string | Required | Project Name |
-| description | string | Optional | Project Description |
-| visibility | string | Optional | Visibility of the project(public/private) |
-| capabilities | [capabilities](#capabilities) | Optional | Capabilities of the project(source control type,etc) |
+| `name` | string | Required | Project Name |
+| `description` | string | Optional | Project Description |
+| `visibility` | string | Optional | Visibility of the project (`"public"`/`"private"`) |
+| `capabilities` | [capabilities](#capabilities) | Optional | Capabilities of the project (source control type,etc) |
 
 ## Attributes
 
 | Name | Description |
 |------|-------------|
-| id | Project ID | 
+| `id` | Project ID | 
 
 ## Extra
 
@@ -61,21 +61,21 @@ resource "azuredevops_project" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| version_control | [version_control](#version-control) | Optional | Version control setting for project |
-| process_template | [process_template](#process-template) | Optional | Process Template |
+| `version_control` | [version_control](#version-control) | Optional | Version control setting for project |
+| `process_template` | [process_template](#process-template) | Optional | Process template |
 
 ### Version Control
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| source_control_type | string | Optional | Source Control Type |
+| `source_control_type` | string | Optional | Source control type |
 
 ### Process Template
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| template_type_id | string | Optional | Template Type ID |
+| `template_type_id` | string | Optional | Template type ID |
 
-## AzureDevOps Reference
+## Azure DevOps Reference
 
-- [AzureDevOps Project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops)
+- [Azure DevOps Project](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops)
