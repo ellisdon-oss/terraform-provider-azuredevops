@@ -82,7 +82,7 @@ resource "azuredevops_build_definition" "default" {
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
-| `name` | string | Required | Build definition nName |
+| `name` | string | Required | Build definition Name |
 | `project_id` | string | Required | Project ID |
 | `demand` | [demand](#demand) | Optional | Demand for agent pool |
 | `process` | [process](#process) | Optional | Process settings for the definition |
