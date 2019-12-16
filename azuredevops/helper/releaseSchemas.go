@@ -163,7 +163,7 @@ func deployPhaseSchema() *schema.Schema {
 					Required: true,
 				},
 				"deployment_input": &schema.Schema{
-					Type:     schema.TypeMap,
+					Type:     schema.TypeString,
 					Required: true,
 				},
 			},
@@ -205,6 +205,10 @@ func WorkflowTaskSingleSchema() *schema.Schema {
 					Type:     schema.TypeBool,
 					Optional: true,
 					Default:  false,
+				},
+				"ref_name": &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
 				},
 				"continue_on_error": &schema.Schema{
 					Type:     schema.TypeBool,
@@ -263,6 +267,10 @@ func WorkflowTaskSchema() *schema.Schema {
 					Type:     schema.TypeBool,
 					Optional: true,
 					Default:  true,
+				},
+				"ref_name": &schema.Schema{
+					Type:     schema.TypeString,
+					Optional: true,
 				},
 				"always_run": &schema.Schema{
 					Type:     schema.TypeBool,

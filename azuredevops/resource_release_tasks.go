@@ -177,6 +177,7 @@ func resourceReleaseTasksCreate(d *schema.ResourceData, meta interface{}) error 
 		taskName := task["name"].(string)
 		taskID, _ := uuid.Parse(task["task_id"].(string))
 		version := task["version"].(string)
+		refName := task["ref_name"].(string)
 		continueOnError := task["continue_on_error"].(bool)
 		definitionType := task["definition_type"].(string)
 
@@ -190,6 +191,7 @@ func resourceReleaseTasksCreate(d *schema.ResourceData, meta interface{}) error 
 			"taskId":          taskID,
 			"continueOnError": continueOnError,
 			"definitionType":  definitionType,
+			"refName":         refName,
 		}
 
 		if rank, ok := d.GetOk(fmt.Sprintf("task.%d.rank", k)); ok {
@@ -363,6 +365,7 @@ func resourceReleaseTasksUpdate(d *schema.ResourceData, meta interface{}) error 
 		taskName := task["name"].(string)
 		taskID, _ := uuid.Parse(task["task_id"].(string))
 		version := task["version"].(string)
+		refName := task["ref_name"].(string)
 		continueOnError := task["continue_on_error"].(bool)
 		definitionType := task["definition_type"].(string)
 
@@ -376,6 +379,7 @@ func resourceReleaseTasksUpdate(d *schema.ResourceData, meta interface{}) error 
 			"taskId":          taskID,
 			"continueOnError": continueOnError,
 			"definitionType":  definitionType,
+			"refName":  refName,
 		}
 
 		if rank, ok := d.GetOk(fmt.Sprintf("task.%d.rank", k)); ok {
@@ -597,6 +601,7 @@ func resourceReleaseTasksRead(d *schema.ResourceData, meta interface{}) error {
 				"continue_on_error": finalTask["continueOnError"],
 				"condition":         finalTask["condition"],
 				"inputs":            finalTask["inputs"],
+				"ref_name":            finalTask["refName"],
 			},
 		}
 

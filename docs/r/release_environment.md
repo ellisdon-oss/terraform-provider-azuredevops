@@ -153,6 +153,7 @@ resource "azuredevops_release_environment" "default" {
 | name | string | Required | Name of the task |
 | definition_type | string | Optional | Definition Type(default to `task`), there is also `metaTask` for adding a task group into a task group |
 | version | string | Optional | Version of the task |
+| ref_name | string | Optional | Output reference name |
 | task_id | string | Required | UUID of the task(recommended using [workflow_task](../d/workflow_task.md) to get the id)  |
 | enabled | boolean | Optional | Enable/Disable the task |
 | always_run | boolean | Optional | Enable/Disable Always Run option in the task |

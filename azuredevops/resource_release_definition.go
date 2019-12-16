@@ -395,6 +395,7 @@ func extractEnvironments(environments []interface{}) []release.ReleaseDefinition
 				taskName := task["name"].(string)
 				taskID, _ := uuid.Parse(task["task_id"].(string))
 				version := task["version"].(string)
+				refName := task["ref_name"].(string)
 				continueOnError := task["continue_on_error"].(bool)
 				definitionType := task["definition_type"].(string)
 
@@ -409,11 +410,15 @@ func extractEnvironments(environments []interface{}) []release.ReleaseDefinition
 					TaskId:          &taskID,
 					ContinueOnError: &continueOnError,
 					DefinitionType:  &definitionType,
+          RefName:         &refName,
 				})
 			}
 
+      deploymentInputs := make(map[string]interface{})
+
+      json.Unmarshal([]byte(v["deployment_input"].(string)), &deploymentInputs)
 			finalDeployPhases = append(finalDeployPhases, map[string]interface{}{
-				"deploymentInput": v["deployment_input"].(map[string]interface{}),
+				"deploymentInput": deploymentInputs,
 				"phaseType":       v["phase_type"].(string),
 				"rank":            v["rank"].(int),
 				"name":            v["name"].(string),
