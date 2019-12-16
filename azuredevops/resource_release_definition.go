@@ -72,6 +72,7 @@ func resourceReleaseDefinitionCreate(d *schema.ResourceData, meta interface{}) e
 		releaseVariables := extractReleaseVariables(v.(*schema.Set))
 		newReleaseDefinition.Variables = &releaseVariables
 	}
+  
 
 	if l, ok := d.GetOk("release_variable_groups"); ok {
 		var varGroups []int
@@ -330,6 +331,12 @@ func extractEnvironments(environments []interface{}) []release.ReleaseDefinition
 					finalApprovalOptions.TimeoutInMinutes = &timeoutInMinutes
 				}
 
+				if len(options.([]interface{})) != 0 && options.([]interface{})[0].(map[string]interface{})["required_approver_count"] != nil {
+
+					requiredApproverCount := options.([]interface{})[0].(map[string]interface{})["required_approver_count"].(int)
+					finalApprovalOptions.RequiredApproverCount = &requiredApproverCount
+				}
+
 				if len(options.([]interface{})) != 0 && options.([]interface{})[0].(map[string]interface{})["release_creator_can_be_approver"] != nil {
 					releaseCreatorCanBeApprover := options.([]interface{})[0].(map[string]interface{})["release_creator_can_be_approver"].(bool)
 					finalApprovalOptions.ReleaseCreatorCanBeApprover = &releaseCreatorCanBeApprover
@@ -351,26 +358,22 @@ func extractEnvironments(environments []interface{}) []release.ReleaseDefinition
 			}
 		}
 
-		globalApprovalRank := 1
-
 		for _, v := range predeployapprovals {
 
 			v := v.(map[string]interface{})
 			approverID := v["approver_id"].(string)
+			approverRank := v["rank"].(int)
 			isAutomated := v["is_automated"].(bool)
 			isNotificationOn := v["is_notification_on"].(bool)
-			approvalRank := globalApprovalRank
 
 			finalPreDeployApprovals = append(finalPreDeployApprovals, release.ReleaseDefinitionApprovalStep{
-				Rank: &approvalRank,
+				Rank: &approverRank,
 				Approver: &webapi.IdentityRef{
 					Id: &approverID,
 				},
 				IsAutomated:      &isAutomated,
 				IsNotificationOn: &isNotificationOn,
 			})
-
-			globalApprovalRank++
 		}
 
 		deployPhases := env["deploy_phase"].([]interface{})
@@ -392,6 +395,7 @@ func extractEnvironments(environments []interface{}) []release.ReleaseDefinition
 				taskName := task["name"].(string)
 				taskID, _ := uuid.Parse(task["task_id"].(string))
 				version := task["version"].(string)
+				refName := task["ref_name"].(string)
 				continueOnError := task["continue_on_error"].(bool)
 				definitionType := task["definition_type"].(string)
 
@@ -406,11 +410,15 @@ func extractEnvironments(environments []interface{}) []release.ReleaseDefinition
 					TaskId:          &taskID,
 					ContinueOnError: &continueOnError,
 					DefinitionType:  &definitionType,
+          RefName:         &refName,
 				})
 			}
 
+      deploymentInputs := make(map[string]interface{})
+
+      json.Unmarshal([]byte(v["deployment_input"].(string)), &deploymentInputs)
 			finalDeployPhases = append(finalDeployPhases, map[string]interface{}{
-				"deploymentInput": v["deployment_input"].(map[string]interface{}),
+				"deploymentInput": deploymentInputs,
 				"phaseType":       v["phase_type"].(string),
 				"rank":            v["rank"].(int),
 				"name":            v["name"].(string),

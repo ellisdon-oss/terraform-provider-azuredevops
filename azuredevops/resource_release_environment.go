@@ -1,6 +1,7 @@
 package azuredevops
 
 import (
+  "encoding/json"
 	"fmt"
 	"github.com/ellisdon-oss/terraform-provider-azuredevops/azuredevops/helper"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -352,21 +353,19 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 				"continue_on_error": mapL["continueOnError"],
 				"condition":         mapL["condition"],
 				"environment":       mapL["environment"],
+				"ref_name":          mapL["refName"],
 				"inputs":            inputs,
 			})
 		}
-		deploymentInput := make(map[string]interface{})
 
-		if v.(map[string]interface{})["deploymentInput"].(map[string]interface{})["queueId"] != nil {
-			deploymentInput["queueId"] = strconv.Itoa(int(v.(map[string]interface{})["deploymentInput"].(map[string]interface{})["queueId"].(float64)))
-		}
+    deploymentInput, _ := json.Marshal(v.(map[string]interface{})["deploymentInput"].(map[string]interface{}))
 
 		//log.Panic(deploymentInput)
 		deployPhases = append(deployPhases, map[string]interface{}{
 			"phase_type":       v.(map[string]interface{})["phaseType"],
 			"name":             v.(map[string]interface{})["name"],
 			"rank":             v.(map[string]interface{})["rank"],
-			"deployment_input": deploymentInput,
+			"deployment_input": string(deploymentInput),
 			"workflow_task":    workflowTasks,
 		})
 	}
@@ -382,6 +381,7 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 		}
 		approvals = append(approvals, map[string]interface{}{
 			"approver_id":        approverID,
+			"rank":               *v.Rank,
 			"is_automated":       *v.IsAutomated,
 			"is_notification_on": *v.IsNotificationOn,
 		})
@@ -394,6 +394,8 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 			"release_creator_can_be_approver": *env.PreDeployApprovals.ApprovalOptions.ReleaseCreatorCanBeApprover,
 		},
 	}
+
+  options[0].(map[string]interface{})["required_approver_count"] = env.PreDeployApprovals.ApprovalOptions.RequiredApproverCount
 
 	preDeployApprovals = append(preDeployApprovals, map[string]interface{}{
 		"options":   options,
@@ -426,7 +428,7 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 			}
 
 			if isSecret {
-				if *oldEnv.Name != "" {
+				if &oldEnv != nil && *oldEnv.Name != "" && oldVariables[k].Value != nil {
 					value = *oldVariables[k].Value
 				}
 			} else {

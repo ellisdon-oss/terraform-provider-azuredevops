@@ -52,9 +52,9 @@ resource "azuredevops_release_environment" "default" {
     }
 
     deploy_phase {
-      deployment_input = {
+      deployment_input = jsonencode({
         queueId = "<queue id>"
-      }
+      })
 
       rank       = 1
       phase_type = "agentBasedDeployment"
@@ -117,12 +117,15 @@ resource "azuredevops_release_environment" "default" {
 | `execution_order` | string | Optional | The order of the execution (default: `beforeGates`) |
 | `timeout_in_minutes` | integer | Required | Set how long until timeout (in minutes) for approval |
 | `release_creator_can_be_approver` | boolean | Optional | Toggle for allowing the release creator to be the approver |
+| `required_approver_count` | int | Optional | Number of approver required |
+
 
 ### Approvals 
 
 | Name | Type | Required/Optional | Description |
 |------|------|-------------------|-------------|
 | `approver_id` | string | Optional | UUID of the approver (can use [user](../d/user.md) or [group](../d/group.md) to get the ID) |
+| `rank` | int | Optional | Default to 1, is use for doing sequence approval |
 | `is_automated` | boolean | Optional | Toggle for approval |
 | `is_notification_on` | boolean | Optional | Enable notification |
 
@@ -141,8 +144,9 @@ resource "azuredevops_release_environment" "default" {
 | `workflow_task` | [workflow_task](#workflow-task) | Required | Task definition |
 | `name` | string | Required | Name of the phase |
 | `rank` | integer | Required | Rank (order) of the phase |
-| `deployment_input` | map | Required | Input for the deployment (e.g. setting agent queue id) |
+| `deployment_input` | json string | Required | Input for the deployment(e.g. setting agent queue id)(json string, use jsonencode() function) |
 | `phase_type` | string | Required | Phase type (e.g. is agent based) |
+
 
 ### Workflow Task
 
@@ -151,6 +155,7 @@ resource "azuredevops_release_environment" "default" {
 | `name` | string | Required | Name of the task |
 | `definition_type` | string | Optional | Definition Type(default: `task`), there is also `metaTask` for adding a task group into a task group |
 | `version` | string | Optional | Version of the task |
+| `ref_name` | string | Optional | Output reference name |
 | `task_id` | string | Required | UUID of the task (recommend using [workflow_task](../d/workflow_task.md) to get the ID)  |
 | `enabled` | boolean | Optional | Enable/disable the task |
 | `always_run` | boolean | Optional | Enable/disable Always Run option in the task |
