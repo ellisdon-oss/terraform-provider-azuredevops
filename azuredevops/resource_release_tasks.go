@@ -195,7 +195,7 @@ func resourceReleaseTasksCreate(d *schema.ResourceData, meta interface{}) error 
 		}
 
 		if rank, ok := d.GetOk(fmt.Sprintf("task.%d.rank", k)); ok {
-			if len(tasks) < rank.(int) {
+			if len(tasks) < rank.(int) || rank.(int) == -1 {
 				tasks = append(tasks, newTask)
 			} else {
 				tasks = append(tasks[:rank.(int)-1], append([]interface{}{newTask}, tasks[rank.(int)-1:]...)...)
@@ -383,7 +383,7 @@ func resourceReleaseTasksUpdate(d *schema.ResourceData, meta interface{}) error 
 		}
 
 		if rank, ok := d.GetOk(fmt.Sprintf("task.%d.rank", k)); ok {
-			if len(tasks) < rank.(int) {
+			if rank.(int) == -1 || len(tasks) < rank.(int) {
 				tasks[len(tasks)-1] = newTask
 			} else {
 				tasks[rank.(int)-1] = newTask
@@ -542,7 +542,7 @@ func resourceReleaseTasksRead(d *schema.ResourceData, meta interface{}) error {
 		var task interface{}
 
 		if rank, ok := d.GetOk(fmt.Sprintf("task.%d.rank", k)); ok {
-			if len(tasks) < rank.(int) {
+			if rank.(int) == -1 || len(tasks) < rank.(int) {
 				task = tasks[len(tasks)-1]
 			} else {
 				task = tasks[rank.(int)-1]
@@ -713,16 +713,16 @@ func resourceReleaseTasksDelete(d *schema.ResourceData, meta interface{}) error 
 		tasks := job["workflowTasks"].([]interface{})
 
 		if rank, ok := d.GetOk(fmt.Sprintf("task.%d.rank", k)); ok {
-			if len(tasks) < rank.(int) {
+			if rank.(int) == -1 || len(tasks) < rank.(int) {
 				_, tasks = tasks[len(tasks)-1], tasks[:len(tasks)-1]
-			} else {
-				if rank.(int)-1 < len(tasks)-1 {
-					copy(tasks[rank.(int)-1:], tasks[rank.(int):])
-				}
-				tasks[len(tasks)-1] = nil
-				tasks = tasks[:len(tasks)-1]
-			}
-		} else if after, ok := d.GetOk(fmt.Sprintf("task.%d.after", k)); ok {
+      } else {
+        if rank.(int)-1 < len(tasks)-1 {
+          copy(tasks[rank.(int)-1:], tasks[rank.(int):])
+        }
+        tasks[len(tasks)-1] = nil
+        tasks = tasks[:len(tasks)-1]
+      }
+    } else if after, ok := d.GetOk(fmt.Sprintf("task.%d.after", k)); ok {
 			found := false
 			for k, v := range tasks {
 				v := v.(map[string]interface{})

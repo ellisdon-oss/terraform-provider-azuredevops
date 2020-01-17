@@ -17,7 +17,6 @@ func EnvironmentSchema() map[string]*schema.Schema {
 		"name": &schema.Schema{
 			Type:     schema.TypeString,
 			Required: true,
-			ForceNew: true,
 		},
 		"rank": &schema.Schema{
 			Type:     schema.TypeInt,

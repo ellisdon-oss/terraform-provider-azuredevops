@@ -169,7 +169,7 @@ func resourceReleaseTaskCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if rank, ok := d.GetOk("rank"); ok {
-		if len(tasks) < rank.(int) {
+		if len(tasks) < rank.(int) || rank.(int) == -1 {
 			tasks = append(tasks, newTask)
 		} else {
 			tasks = append(tasks[:rank.(int)-1], append([]interface{}{newTask}, tasks[rank.(int)-1:]...)...)
@@ -329,7 +329,7 @@ func resourceReleaseTaskUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if rank, ok := d.GetOk("rank"); ok {
-		if len(tasks) < rank.(int) {
+		if rank.(int) == -1 || len(tasks) < rank.(int) {
 			tasks[len(tasks)-1] = newTask
 		} else {
 			tasks[rank.(int)-1] = newTask
@@ -459,7 +459,7 @@ func resourceReleaseTaskRead(d *schema.ResourceData, meta interface{}) error {
 	var task interface{}
 
 	if rank, ok := d.GetOk("rank"); ok {
-		if len(tasks) < rank.(int) {
+		if rank.(int) == -1 || len(tasks) < rank.(int) {
 			task = tasks[len(tasks)-1]
 		} else {
 			task = tasks[rank.(int)-1]
