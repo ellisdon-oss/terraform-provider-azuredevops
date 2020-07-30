@@ -629,11 +629,27 @@ func extractTrigger(variables *schema.Set) []interface{} {
 		triggerType := artifact["trigger_type"].(string)
 		branchFilters := artifact["branch_filters"].([]interface{})
 
-		finalTriggers = append(finalTriggers, map[string]interface{}{
-			"alias":         alias,
-			"triggerType":   triggerType,
-			"branchFilters": branchFilters,
-		})
+    if triggerType == "sourceRepo" {
+      finalTriggers = append(finalTriggers, map[string]interface{}{
+        "alias":         alias,
+        "triggerType":   triggerType,
+        "branchFilters": branchFilters,
+      })
+    } else if triggerType == "artifactSource" {
+      triggerConditions := make([]map[string]interface{}, 0)
+
+      for _, filter := range branchFilters {
+        triggerConditions = append(triggerConditions, map[string]interface{}{
+          "sourceBranch": filter,
+        })
+      }
+
+      finalTriggers = append(finalTriggers, map[string]interface{}{
+        "artifactAlias":         alias,
+        "triggerType":   triggerType,
+        "triggerConditions": triggerConditions,
+      })
+    }
 	}
 
 	return finalTriggers
@@ -664,7 +680,9 @@ func readArtifact(artifacts []release.Artifact) *schema.Set {
 	}
 
 	for _, value := range artifacts {
-		res, _ := json.Marshal(value.DefinitionReference)
+    defs := *value.DefinitionReference
+    delete(defs, "artifactSourceDefinitionUrl")
+		res, _ := json.Marshal(defs)
 		finalArtifacts = append(finalArtifacts, map[string]interface{}{
 			"definition_reference": string(res),
 			"alias":                *value.Alias,
@@ -699,11 +717,24 @@ func readTrigger(triggers []interface{}) *schema.Set {
 
 	for _, value := range triggers {
 		value := value.(map[string]interface{})
-		finalTriggers = append(finalTriggers, map[string]interface{}{
-			"alias":          value["alias"],
-			"trigger_type":   value["triggerType"],
-			"branch_filters": value["branchFilters"],
-		})
+    if value["triggerType"] == "sourceRepo" {
+      finalTriggers = append(finalTriggers, map[string]interface{}{
+        "alias":          value["alias"],
+        "trigger_type":   value["triggerType"],
+        "branch_filters": value["branchFilters"],
+      })
+    } else if value["triggerType"].(string) == "artifactSource" {
+      branchFilters := make([]interface{}, 0)
+      for _, condition := range value["triggerConditions"].([]interface{}) {
+        condition := condition.(map[string]interface{})
+        branchFilters = append(branchFilters, condition["sourceBranch"].(string))
+      }
+      finalTriggers = append(finalTriggers, map[string]interface{}{
+        "alias":          value["artifactAlias"],
+        "trigger_type":   value["triggerType"],
+        "branch_filters": branchFilters,
+      })
+    }
 	}
 
 	return schema.NewSet(schema.HashResource(testResource), finalTriggers)

@@ -32,6 +32,13 @@ func resourceReleaseTask() *schema.Resource {
 				ForceNew:      true,
 				ConflictsWith: []string{"job_rank"},
 			},
+			"replace": &schema.Schema{
+				Type:          schema.TypeBool,
+				Optional:      true,
+				ForceNew:      true,
+				Default:       false,
+				ConflictsWith: []string{"after", "before"},
+			},
 			"rank": &schema.Schema{
 				Type:          schema.TypeInt,
 				Optional:      true,
@@ -172,7 +179,11 @@ func resourceReleaseTaskCreate(d *schema.ResourceData, meta interface{}) error {
 		if len(tasks) < rank.(int) || rank.(int) == -1 {
 			tasks = append(tasks, newTask)
 		} else {
-			tasks = append(tasks[:rank.(int)-1], append([]interface{}{newTask}, tasks[rank.(int)-1:]...)...)
+      if d.Get("replace").(bool) {
+        tasks[rank.(int)-1] = newTask
+      } else {
+        tasks = append(tasks[:rank.(int)-1], append([]interface{}{newTask}, tasks[rank.(int)-1:]...)...)
+      }
 		}
 	} else if after, ok := d.GetOk("after"); ok {
 		found := false

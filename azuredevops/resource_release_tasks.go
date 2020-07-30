@@ -36,6 +36,12 @@ func resourceReleaseTasks() *schema.Resource {
 							ForceNew: true,
 							Computed: true,
 						},
+            "replace": &schema.Schema{
+              Type:          schema.TypeBool,
+              Optional:      true,
+              ForceNew:      true,
+              Default:       false,
+            },
 						"before": &schema.Schema{
 							Type:     schema.TypeString,
 							Optional: true,
@@ -196,9 +202,13 @@ func resourceReleaseTasksCreate(d *schema.ResourceData, meta interface{}) error 
 
 		if rank, ok := d.GetOk(fmt.Sprintf("task.%d.rank", k)); ok {
 			if len(tasks) < rank.(int) || rank.(int) == -1 {
-				tasks = append(tasks, newTask)
-			} else {
-				tasks = append(tasks[:rank.(int)-1], append([]interface{}{newTask}, tasks[rank.(int)-1:]...)...)
+        tasks = append(tasks, newTask)
+      } else {
+        if d.Get(fmt.Sprintf("task.%d.replace", k)).(bool) {
+          tasks[rank.(int)-1] = newTask
+        } else {
+          tasks = append(tasks[:rank.(int)-1], append([]interface{}{newTask}, tasks[rank.(int)-1:]...)...)
+        }
 			}
 		} else if after, ok := d.GetOk(fmt.Sprintf("task.%d.after", k)); ok {
 			found := false

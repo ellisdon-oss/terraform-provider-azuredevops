@@ -78,7 +78,7 @@ func resourceReleaseEnvironmentCreate(d *schema.ResourceData, meta interface{}) 
 
 	tempEnvNames := "["
 	for _, v := range parsedEnvs {
-		tempEnvNames = fmt.Sprintf("%s %s", tempEnvNames, v.Name)
+		tempEnvNames = fmt.Sprintf("%s %s", tempEnvNames, *v.Name)
 	}
 	tempEnvNames = fmt.Sprintf("%s]", tempEnvNames)
 
@@ -434,6 +434,153 @@ func convertEnvToMap(env release.ReleaseDefinitionEnvironment, oldEnv release.Re
 			} else {
 				value = *v.Value
 			}
+
+			variables = append(variables, map[string]interface{}{
+				"is_secret": isSecret,
+				"value":     value,
+				"name":      k,
+			})
+		}
+	}
+
+	result = map[string]interface{}{
+		"name":                *env.Name,
+		"rank":                *env.Rank,
+		"deploy_phase":        deployPhases,
+		"pre_deploy_approval": preDeployApprovals,
+		"condition":           conditions,
+		"variable":            schema.NewSet(schema.HashResource(testResource), variables),
+		"variable_groups":     *env.VariableGroups,
+	}
+
+	return result
+}
+
+func convertEnvToMapDirect(env release.ReleaseDefinitionEnvironment) map[string]interface{} {
+	result := make(map[string]interface{})
+	testResource := &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"is_secret": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"name": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"value": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+		},
+	}
+
+	deployPhases := []interface{}{}
+	preDeployApprovals := []interface{}{}
+	conditions := []interface{}{}
+
+	var variables []interface{}
+
+	for _, v := range *env.DeployPhases {
+		workflowTasks := []interface{}{}
+		val := v.(map[string]interface{})["workflowTasks"].([]interface{})
+
+		for _, l := range val {
+      inputs := make(map[string]interface{})
+      for k, v := range l.(map[string]interface{})["inputs"].(map[string]interface{}) {
+        inputs[k] = v
+      }
+
+			mapL := l.(map[string]interface{})
+
+			workflowTasks = append(workflowTasks, map[string]interface{}{
+				"name":              mapL["name"],
+				"definition_type":   mapL["definitionType"],
+				"version":           mapL["version"],
+				"task_id":           mapL["taskId"],
+				"enabled":           mapL["enabled"],
+				"always_run":        mapL["alwaysRun"],
+				"continue_on_error": mapL["continueOnError"],
+				"condition":         mapL["condition"],
+				"environment":       mapL["environment"],
+				"ref_name":          mapL["refName"],
+				"inputs":            inputs,
+			})
+		}
+
+    deploymentInput, _ := json.Marshal(v.(map[string]interface{})["deploymentInput"].(map[string]interface{}))
+
+		//log.Panic(deploymentInput)
+		deployPhases = append(deployPhases, map[string]interface{}{
+			"phase_type":       v.(map[string]interface{})["phaseType"],
+			"name":             v.(map[string]interface{})["name"],
+			"rank":             v.(map[string]interface{})["rank"],
+			"deployment_input": string(deploymentInput),
+			"workflow_task":    workflowTasks,
+		})
+	}
+
+	approvals := []interface{}{}
+
+	for _, v := range *env.PreDeployApprovals.Approvals {
+		var approverID string
+		if v.Approver == nil {
+			approverID = ""
+		} else {
+			approverID = *(*v.Approver).Id
+		}
+		approvals = append(approvals, map[string]interface{}{
+			"approver_id":        approverID,
+			"rank":               *v.Rank,
+			"is_automated":       *v.IsAutomated,
+			"is_notification_on": *v.IsNotificationOn,
+		})
+	}
+
+	options := []interface{}{
+		map[string]interface{}{
+			"execution_order":                 *env.PreDeployApprovals.ApprovalOptions.ExecutionOrder,
+			"timeout_in_minutes":              *env.PreDeployApprovals.ApprovalOptions.TimeoutInMinutes,
+			"release_creator_can_be_approver": *env.PreDeployApprovals.ApprovalOptions.ReleaseCreatorCanBeApprover,
+		},
+	}
+
+  options[0].(map[string]interface{})["required_approver_count"] = env.PreDeployApprovals.ApprovalOptions.RequiredApproverCount
+
+	preDeployApprovals = append(preDeployApprovals, map[string]interface{}{
+		"options":   options,
+		"approvals": approvals,
+	})
+
+	for _, v := range *env.Conditions {
+
+    value := ""
+    if v.Value != nil {
+      value = *v.Value
+    }
+
+		conditions = append(conditions, map[string]interface{}{
+			"condition_type": *v.ConditionType,
+			"name":           *v.Name,
+			"value":          value,
+		})
+	}
+
+	for k, v := range *env.Variables {
+		if k != "" {
+			value := ""
+
+			var isSecret bool
+			if v.IsSecret != nil && *v.IsSecret {
+				isSecret = true
+			} else {
+				isSecret = false
+			}
+
+      if v.Value != nil {
+        value = *v.Value
+      }
 
 			variables = append(variables, map[string]interface{}{
 				"is_secret": isSecret,

@@ -121,9 +121,16 @@ func dataSourceVariableGroupRead(d *schema.ResourceData, meta interface{}) error
 	var variables []interface{}
 
 	for k, v := range *group.Variables {
+    finalValue := ""
+
+    
+    if v.IsSecret == nil {
+      finalValue = *v.Value
+    }
+
 		variables = append(variables, map[string]interface{}{
 			"is_secret": v.IsSecret,
-			"value":     *v.Value,
+			"value":     finalValue,
 			"name":      k,
 		})
 	}
