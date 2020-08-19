@@ -19,7 +19,7 @@ builds:
   - 7
 release:
   github:
-    owner: Ellisdon-Aegean
+    owner: ellisdon-oss
     name: terraform-provider-azuredevops
   name_template: '{{.Tag}}'
 archives:
