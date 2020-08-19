@@ -14,10 +14,12 @@ func dataSourceAgentQueue() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"queue_name": &schema.Schema{
 				Type:     schema.TypeString,
+        Description: "The agent queue name",
 				Required: true,
 			},
 			"project_id": &schema.Schema{
 				Type:     schema.TypeString,
+        Description: "The project name/ID",
 				Required: true,
 			},
 		},
