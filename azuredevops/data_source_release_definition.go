@@ -35,10 +35,12 @@ func dataSourceReleaseDefinitionRead(d *schema.ResourceData, meta interface{}) e
 
 	projectID := d.Get("project_id").(string)
 	name := d.Get("name").(string)
+  exactNameMatch := true
 
 	releaseDefs, err := releaseClient.GetReleaseDefinitions(config.Context, release.GetReleaseDefinitionsArgs{
 		Project:    &projectID,
 		SearchText: &name,
+    IsExactNameMatch: &exactNameMatch,
 	})
 
 	if err != nil {
